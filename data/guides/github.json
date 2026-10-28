@@ -168,7 +168,7 @@
   ],
   "communityNotes": [
     {"id": "github-app-over-oauth-app", "tip": "For anything long-lived or used by an organization, build a GitHub App rather than an OAuth App. An OAuth App mainly makes sense for quick personal scripts.", "tag": "shortcut", "sourceType": "forum", "site": "GitHub Community discussions", "url": "https://github.com/orgs/community/discussions/109668", "date": "2024-03-07", "author": "skedwards88", "quote": "You should almost always choose a GitHub App over an OAuth app", "conflictsWithDocs": false, "conflictNote": null},
-    {"id": "github-oauth-org-restrictions", "tip": "OAuth App user tokens can reach all of a user's repositories, but organizations can restrict OAuth Apps. Members then have to request approval from an org owner before your app can see that org's data.", "tag": "gotcha", "sourceType": "code", "site": "GitHub (octokit handbook)", "url": "https://github.com/octokit/handbook", "date": "2024-03-21", "dateNote": "Date of the last README commit.", "author": "octokit", "quote": null, "conflictsWithDocs": false, "conflictNote": null}
+    {"id": "github-oauth-org-restrictions", "tip": "OAuth App user tokens can reach all of a user's repositories, but organizations can restrict OAuth Apps. Members then have to request approval from an org owner before your app can see that org's data.", "tag": "gotcha", "sourceType": "code", "site": "GitHub (octokit handbook)", "url": "https://github.com/octokit/handbook", "date": "2024-03-21", "dateKind": "updated", "dateNote": "Date of the last commit to this README.", "author": "octokit", "quote": null, "conflictsWithDocs": false, "conflictNote": null}
   ],
   "composio": {
     "managed": "yes",

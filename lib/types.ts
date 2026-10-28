@@ -1,6 +1,7 @@
 import type { GuideUsage } from "./usage";
 
-export type Difficulty = "Easy" | "Medium" | "Hard" | "Gated";
+/** "Unknown" is only set by code, for partial guides; the model must pick one of the other four. */
+export type Difficulty = "Easy" | "Medium" | "Hard" | "Gated" | "Unknown";
 export type EvidenceLabel = "Tested" | "Docs" | "Uncertain";
 export type Actor = "agent" | "you";
 
@@ -82,6 +83,8 @@ export interface CommunityNote {
   url: string;
   /** "YYYY-MM-DD", "YYYY-MM" or "YYYY": only as precise as the source shows. */
   date: string;
+  /** "updated" when the only date is a last-commit date (e.g. a README). Defaults to "posted". */
+  dateKind?: "posted" | "updated";
   dateNote?: string | null;
   /** Public handle as shown on the source; null shows "A developer". */
   author: string | null;
@@ -133,6 +136,8 @@ export interface Guide {
   } | null;
   sources: string[];
   lastChecked: string;
+  /** Set when a generated run hit the time limit and saved its raw facts instead of a written guide. */
+  partial?: boolean;
   /** Token and cost accounting for generated guides. */
   usage?: GuideUsage;
 }

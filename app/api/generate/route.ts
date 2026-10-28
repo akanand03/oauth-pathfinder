@@ -6,10 +6,14 @@ import { parseQuery } from "@/lib/slug";
 import { acquireLock, getGuide, isLocked, releaseLock, saveGuide } from "@/lib/store";
 import type { ProgressEvent } from "@/lib/types";
 
+// Vercel Hobby with Fluid compute caps functions at 300s. Free-model runs have taken up to ~340s,
+// so the agent stops 25s early and saves what it has as a partial guide.
 export const maxDuration = 300;
+const SAVE_MARGIN_MS = 25_000;
 
 // GET so the browser can use EventSource. Generation is gated by cache, lock and rate limit.
 export async function GET(req: Request) {
+  const deadline = Date.now() + maxDuration * 1000 - SAVE_MARGIN_MS;
   const q = parseQuery(new URL(req.url).searchParams.get("q") ?? "");
   const encoder = new TextEncoder();
 
@@ -44,7 +48,9 @@ export async function GET(req: Request) {
       }
 
       const slug = librarySlugFor(q.slug) ?? q.slug;
-      if (await getGuide(slug)) {
+      // A partial guide (time limit hit) can be regenerated; a full one is served from the cache.
+      const existing = await getGuide(slug);
+      if (existing && !existing.partial) {
         emit({ type: "found", message: "Guide already exists, opening it." });
         emit({ type: "done", slug });
         return finish();
@@ -67,12 +73,15 @@ export async function GET(req: Request) {
         emit({ type: "stage", stage: "wait", message: "Someone else is researching this app. Waiting for their result…" });
         for (let i = 0; i < 90 && !closed; i++) {
           await new Promise((r) => setTimeout(r, 3000));
-          if (await getGuide(slug)) {
+          const done = await getGuide(slug);
+          if (done && !done.partial) {
             emit({ type: "done", slug });
             return finish();
           }
           if (!(await isLocked(slug))) {
-            emit({ type: "error", message: "The other run finished without a guide. Try again." });
+            // The other run ended: show its result (possibly partial), or report that it saved nothing.
+            if (done) emit({ type: "done", slug });
+            else emit({ type: "error", message: "The other run finished without a guide. Try again." });
             return finish();
           }
         }
@@ -81,7 +90,7 @@ export async function GET(req: Request) {
       }
 
       try {
-        const guide = await runAgent({ ...q, slug }, emit);
+        const guide = await runAgent({ ...q, slug }, emit, deadline);
         await saveGuide(guide);
         emit({ type: "done", slug });
       } catch (err) {

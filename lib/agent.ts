@@ -21,6 +21,23 @@ const MAX_FACTS = 45;
 
 type Emit = (e: ProgressEvent) => void;
 
+const TIMED_OUT = Symbol("timed out");
+
+/** Resolves to TIMED_OUT if `p` hasn't settled by `deadline`. The call keeps running; its result is ignored. */
+async function beforeDeadline<T>(p: Promise<T>, deadline: number): Promise<T | typeof TIMED_OUT> {
+  const ms = deadline - Date.now();
+  if (ms <= 0) return TIMED_OUT;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([p, new Promise<typeof TIMED_OUT>((r) => (timer = setTimeout(() => r(TIMED_OUT), ms)))]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Don't start an extraction call with less time than this left; it would just be cut off.
+const MIN_EXTRACT_MS = 20_000;
+
 interface Fact {
   claim: string;
   category: string;
@@ -60,7 +77,11 @@ Content rules:
 - Never mention fact numbers (F1, F2…) in any text; they're internal.
 - Keep every string concise (one or two sentences).`;
 
-export async function runAgent(q: ParsedQuery, emit: Emit): Promise<Guide> {
+/**
+ * `deadline` (epoch ms) is when the run must stop so the caller can still save: the hosting function has a hard
+ * time limit. If it hits during extraction or writing, the facts found so far are returned as a partial guide.
+ */
+export async function runAgent(q: ParsedQuery, emit: Emit, deadline = Number.POSITIVE_INFINITY): Promise<Guide> {
   const llm = createSession(emit);
   const usage: StageUsage[] = [];
 
@@ -126,16 +147,29 @@ export async function runAgent(q: ParsedQuery, emit: Emit): Promise<Guide> {
   // 4. Extraction: one small call per page so each stays well under free-tier per-minute token limits.
   const facts: Fact[] = [];
   let oauthSupported = "unclear";
+  let timedOut = false;
   for (const [i, { page, text }] of pages.entries()) {
+    if (deadline - Date.now() < MIN_EXTRACT_MS) {
+      timedOut = true;
+      break;
+    }
     emit({ type: "stage", stage: "extract", message: `Reading page ${i + 1} of ${pages.length}` });
-    const { json, usage: u } = await llm.generateJson({
-      stage: `extract ${i + 1}`,
-      role: "extract",
-      system: EXTRACT_PROMPT,
-      input: `Provider: ${q.name}\nPage URL: ${page.url}\nPage title: ${page.title}\n\n${text}`,
-      schema: extractSchema,
-      maxOutput: EXTRACT_MAX_OUTPUT,
-    });
+    const result = await beforeDeadline(
+      llm.generateJson({
+        stage: `extract ${i + 1}`,
+        role: "extract",
+        system: EXTRACT_PROMPT,
+        input: `Provider: ${q.name}\nPage URL: ${page.url}\nPage title: ${page.title}\n\n${text}`,
+        schema: extractSchema,
+        maxOutput: EXTRACT_MAX_OUTPUT,
+      }),
+      deadline,
+    );
+    if (result === TIMED_OUT) {
+      timedOut = true;
+      break;
+    }
+    const { json, usage: u } = result;
     usage.push(u);
     console.log(`[agent] ${q.slug}/extract-${i + 1} ${u.model} tokens`, u.inputTokens, "in /", u.outputTokens, "out");
 
@@ -162,8 +196,24 @@ export async function runAgent(q: ParsedQuery, emit: Emit): Promise<Guide> {
 
   // Writing from zero facts produces an empty "Unknown" guide; stop instead and keep the slug free to retry.
   if (facts.length === 0) {
-    throw new Error("No facts could be extracted from the official pages (model output was cut off or empty). No guide was saved.");
+    throw new Error(
+      timedOut
+        ? "The run hit the time limit before any facts were extracted. No guide was saved; try again later."
+        : "No facts could be extracted from the official pages (model output was cut off or empty). No guide was saved.",
+    );
   }
+
+  const sources = [...pages.map((p) => p.page.url), ...(composio.evidence.url ? [composio.evidence.url] : [])];
+  const accounting = () => {
+    const totalTokens = usage.reduce((n, s) => n + s.inputTokens + s.outputTokens, 0);
+    const estimatedCostUsd = usage.reduce((n, s) => n + s.costUsd, 0);
+    return { stages: usage, totalTokens, estimatedCostUsd, searches: queries.length, pagesFetched: pages.length, pagesFromCache };
+  };
+  const partial = (stage: string): Guide => {
+    emit({ type: "found", message: `Time limit reached during ${stage}: saving ${facts.length} extracted facts as a partial guide, all marked Uncertain.` });
+    return partialGuide({ q, domain, facts, stage, composio, portalObservation, sources, usage: accounting() });
+  };
+  if (timedOut) return partial("extraction");
 
   // 5. Write: one call to the stronger model over the compact fact list.
   emit({ type: "stage", stage: "write", message: `Writing guide with ${modelFor("write")}` });
@@ -176,14 +226,19 @@ export async function runAgent(q: ParsedQuery, emit: Emit): Promise<Guide> {
   const limit = llm.perMinuteLimit;
   const maxOut = limit ? Math.max(2500, Math.min(WRITE_MAX_OUTPUT, limit - inputEstimate - 300)) : WRITE_MAX_OUTPUT;
 
-  const { json: written, usage: wu } = await llm.generateJson({
-    stage: "write",
-    role: "write",
-    system: WRITE_PROMPT,
-    input: writeInput,
-    schema: writeSchema,
-    maxOutput: maxOut,
-  });
+  const writeResult = await beforeDeadline(
+    llm.generateJson({
+      stage: "write",
+      role: "write",
+      system: WRITE_PROMPT,
+      input: writeInput,
+      schema: writeSchema,
+      maxOutput: maxOut,
+    }),
+    deadline,
+  );
+  if (writeResult === TIMED_OUT) return partial("writing");
+  const { json: written, usage: wu } = writeResult;
   usage.push(wu);
   console.log(`[agent] ${q.slug}/write ${wu.model} tokens`, wu.inputTokens, "in /", wu.outputTokens, "out");
   if (!written) throw new Error("The write step ran out of output tokens. No guide was saved.");
@@ -196,8 +251,7 @@ export async function runAgent(q: ParsedQuery, emit: Emit): Promise<Guide> {
   const verifiedPages = new Set(kept.filter((f) => f.verified).map((f) => pageKey(f.sourceUrl)));
   const fix = (e: Evidence): Evidence => enforceEvidence(e, verifiedPages);
 
-  const totalTokens = usage.reduce((n, s) => n + s.inputTokens + s.outputTokens, 0);
-  const estimatedCostUsd = usage.reduce((n, s) => n + s.costUsd, 0);
+  const { totalTokens, estimatedCostUsd } = accounting();
   console.log(`[agent] ${q.slug} total`, totalTokens, "tokens", formatUsd(estimatedCostUsd));
   emit({ type: "found", message: `Guide written · ${totalTokens.toLocaleString()} tokens total (~${formatUsd(estimatedCostUsd)})` });
 
@@ -223,16 +277,60 @@ export async function runAgent(q: ParsedQuery, emit: Emit): Promise<Guide> {
     blockers: draft.blockers.map((b) => ({ ...b, evidence: fix(b.evidence) })),
     composio,
     portalObservation,
-    sources: [...pages.map((p) => p.page.url), ...(composio.evidence.url ? [composio.evidence.url] : [])],
+    sources,
     lastChecked: today(),
-    usage: {
-      stages: usage,
-      totalTokens,
-      estimatedCostUsd,
-      searches: queries.length,
-      pagesFetched: pages.length,
-      pagesFromCache,
+    usage: accounting(),
+  };
+}
+
+const PARTIAL_CALLOUTS = 20;
+
+/**
+ * Built in code, no model: the raw extracted facts, verified ones first, each labelled Uncertain because no
+ * guide was written to check them against. Saved so a timed-out run isn't wasted; the route lets it be regenerated.
+ */
+export function partialGuide(args: {
+  q: ParsedQuery;
+  domain: string;
+  facts: Fact[];
+  stage: string;
+  composio: Guide["composio"];
+  portalObservation: Guide["portalObservation"];
+  sources: string[];
+  usage: Guide["usage"];
+}): Guide {
+  const { q, domain, facts, stage } = args;
+  const ordered = [...facts.filter((f) => f.verified), ...facts.filter((f) => !f.verified)].slice(0, PARTIAL_CALLOUTS);
+  const notWritten: Evidence = { label: "Uncertain", url: null, note: "Partial guide: the run stopped before this was written." };
+  return {
+    slug: q.slug,
+    name: q.name,
+    website: q.website ?? `https://${domain}`,
+    kind: "generated",
+    partial: true,
+    verdict: {
+      difficulty: "Unknown",
+      timeToFirstTest: { text: "Not documented", evidence: notWritten },
+      timeToProduction: { text: "Not documented", evidence: notWritten },
+      summary: `Partial guide: the run hit the hosting time limit during ${stage}, so these are the raw facts found on ${q.name}'s official pages, not a written guide. Search for ${q.name} again to regenerate it.`,
     },
+    callouts: ordered.map((f) => ({
+      text: f.claim,
+      evidence: {
+        label: "Uncertain",
+        url: f.sourceUrl,
+        note: f.verified ? "Partial run: quote found on this page, but the guide wasn't written." : "Partial run: quote not verified.",
+      },
+    })),
+    steps: [],
+    requirements: [],
+    scopes: { triggerReview: [], noReview: [], tip: "Not covered: the run stopped before the guide was written." },
+    blockers: [],
+    composio: args.composio,
+    portalObservation: args.portalObservation,
+    sources: args.sources,
+    lastChecked: today(),
+    usage: args.usage,
   };
 }
 

@@ -60,7 +60,7 @@ export default function Home() {
           scopes trigger review, and what gets submissions rejected. Every claim is labelled with its evidence.
         </p>
         <SearchBox />
-        <p className="text-xs text-zinc-500">Not in the library? An agent researches it live in about a minute and saves the guide.</p>
+        <p className="text-xs text-zinc-500">Not in the library? An agent researches it live in about 2 to 5 minutes and saves the guide.</p>
       </section>
 
       <section className="space-y-4">

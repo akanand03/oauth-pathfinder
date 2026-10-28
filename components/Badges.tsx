@@ -5,6 +5,7 @@ const DIFFICULTY_STYLES: Record<Difficulty, string> = {
   Medium: "bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300",
   Hard: "bg-rose-100 text-rose-800 dark:bg-rose-900/50 dark:text-rose-300",
   Gated: "bg-violet-100 text-violet-800 dark:bg-violet-900/50 dark:text-violet-300",
+  Unknown: "bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300",
 };
 
 export function DifficultyBadge({ difficulty }: { difficulty: Difficulty }) {

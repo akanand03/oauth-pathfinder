@@ -35,6 +35,12 @@ export function GuideView({ guide }: { guide: Guide }) {
           </span>
         </div>
         <p className="text-zinc-700 dark:text-zinc-300">{guide.verdict.summary}</p>
+        {guide.partial && (
+          <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+            <strong>Partial guide.</strong> The research hit the time limit, so everything below is unchecked raw facts, all marked
+            Uncertain. Search for {guide.name} again to regenerate it.
+          </p>
+        )}
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <div className="text-xs uppercase tracking-wide text-zinc-500">Time to first test</div>

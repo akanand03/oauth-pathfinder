@@ -75,6 +75,21 @@ function Avatar({ name }: { name: string }) {
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+/** Latest day a partial date ("2025", "2025-01") could mean, so the age tag never overstates. */
+function latestDay(date: string): Date {
+  const [y, m, d] = date.split("-").map(Number);
+  if (d) return new Date(Date.UTC(y, m - 1, d));
+  if (m) return new Date(Date.UTC(y, m, 0));
+  return new Date(Date.UTC(y, 11, 31));
+}
+
+/** Measured against the guide's lastChecked date, so the tag is stable between checks. */
+function isOlderThanTwoYears(date: string, asOf: string): boolean {
+  const cutoff = new Date(`${asOf}T00:00:00Z`);
+  cutoff.setUTCFullYear(cutoff.getUTCFullYear() - 2);
+  return latestDay(date) < cutoff;
+}
+
 /** Show the date only as precisely as the source gave it. */
 function formatDate(date: string): string {
   const [y, m, d] = date.split("-");
@@ -91,8 +106,9 @@ export function AnecdotalBadge() {
   );
 }
 
-export function NoteCard({ note, appName }: { note: CommunityNote; appName?: string }) {
+export function NoteCard({ note, asOf, appName }: { note: CommunityNote; asOf: string; appName?: string }) {
   const author = note.author ?? "A developer";
+  const old = isOlderThanTwoYears(note.date, asOf);
   return (
     <article className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
       <div className="flex flex-wrap items-center gap-1.5">
@@ -100,6 +116,11 @@ export function NoteCard({ note, appName }: { note: CommunityNote; appName?: str
           {TAGS[note.tag]}
         </span>
         <AnecdotalBadge />
+        {old && (
+          <span className="inline-flex items-center rounded border border-zinc-300 px-1.5 py-px text-[11px] font-medium text-zinc-600 dark:border-zinc-600 dark:text-zinc-400">
+            Older than 2 years
+          </span>
+        )}
         {note.conflictsWithDocs && (
           <span
             className="inline-flex items-center rounded border border-orange-300 bg-orange-50 px-1.5 py-px text-[11px] font-medium text-orange-800 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300"
@@ -134,7 +155,7 @@ export function NoteCard({ note, appName }: { note: CommunityNote; appName?: str
           >
             <SourceIcon type={note.sourceType} />
             <span className="sr-only">{SOURCE_LABEL[note.sourceType]}:</span>
-            {note.site} · {formatDate(note.date)} ↗
+            {note.site} · {note.dateKind === "updated" ? "Updated" : "Posted"} {formatDate(note.date)} ↗
           </a>
         </div>
       </div>
@@ -158,7 +179,7 @@ export function CommunityNotes({ guide }: { guide: Guide }) {
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           {notes.map((n) => (
-            <NoteCard key={n.id} note={n} />
+            <NoteCard key={n.id} note={n} asOf={guide.lastChecked} />
           ))}
         </div>
       )}
@@ -181,7 +202,7 @@ export function FeaturedNotes({ guides }: { guides: Guide[] }) {
       <div className="grid gap-3 md:grid-cols-3">
         {featured.map(({ note, guide }) => (
           <div key={note.id} className="flex flex-col gap-1">
-            <NoteCard note={note} appName={guide.name} />
+            <NoteCard note={note} asOf={guide.lastChecked} appName={guide.name} />
             <Link href={`/guides/${guide.slug}`} className="px-1 text-xs text-indigo-600 hover:underline dark:text-indigo-400">
               More in the {guide.name} guide →
             </Link>
