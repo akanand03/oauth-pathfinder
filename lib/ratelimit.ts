@@ -23,7 +23,7 @@ export async function checkGenerateLimit(ip: string): Promise<RateLimitResult> {
   if (globalCount > GLOBAL_PER_DAY) {
     return {
       ok: false,
-      reason: `Today's ${GLOBAL_PER_DAY} new guides for this demo are used up; it resets at midnight UTC. The library and all saved guides still work.`,
+      reason: `Today's ${GLOBAL_PER_DAY} new guide${GLOBAL_PER_DAY === 1 ? "" : "s"} for this demo ${GLOBAL_PER_DAY === 1 ? "is" : "are"} used up; it resets at midnight UTC. The library and all saved guides still work.`,
     };
   }
   return { ok: true };
