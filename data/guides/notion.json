@@ -1,0 +1,155 @@
+{
+  "slug": "notion",
+  "name": "Notion",
+  "website": "https://developers.notion.com",
+  "kind": "library",
+  "verdict": {
+    "difficulty": "Medium",
+    "timeToFirstTest": {
+      "text": "Minutes with a personal access token or internal connection in your own workspace. A public OAuth connection takes a little longer to set up.",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization", "note": "The docs describe PATs and internal connections as static tokens with no OAuth flow; they give no time estimate, so 'minutes' is our reading." }
+    },
+    "timeToProduction": {
+      "text": "A public connection works through its OAuth flow without a Marketplace listing. Marketplace listing is optional; Notion says to expect a reply within 5–10 business days.",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/marketplace-listing" }
+    },
+    "summary": "Notion has no OAuth scopes to get reviewed: users pick which pages to share in a page picker. Build a public connection for a 'Connect Notion' button. The Marketplace listing is optional and reviewed separately."
+  },
+  "callouts": [
+    {
+      "text": "Choose the installation scope carefully: 'Any workspace' or 'Selected workspaces only' can't be changed after the connection is created, and only 'Any workspace' connections can be listed on the Marketplace.",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/marketplace-listing" }
+    },
+    {
+      "text": "The docs note that the Authorization URL field populates after a public connection is submitted for review. It's unclear how long that takes or whether approval is needed first; we didn't test it.",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization", "note": "Quoted from an image caption on the page; timing is not documented." }
+    },
+    {
+      "text": "Each user authorizes separately. After one person installs a public connection, other members of the same workspace must go through the auth flow themselves.",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" }
+    },
+    {
+      "text": "Don't confuse this with Notion Workers' OAuth page: that one is about a Worker connecting to other providers (GitHub, Google) using PKCE, not about other apps connecting to Notion.",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/workers/guides/oauth" }
+    },
+    {
+      "text": "Your connection only sees pages the user shared in the page picker, and the picker only shows pages the user has full access to.",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Decide: personal token, internal connection, or public connection",
+      "detail": "Use a personal access token or internal connection to act in your own workspace. Use a public connection when other Notion users need to install your agent.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" }
+    },
+    {
+      "title": "Create a public connection in the Developer portal",
+      "detail": "Fill in connection details, your redirect URI(s) under OAuth configuration, and the installation scope (can't be changed later).",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" }
+    },
+    {
+      "title": "Store the client ID and secret as secrets",
+      "detail": "Copy them from the connection's Configuration tab into environment variables. Never put them in source code or version control.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" }
+    },
+    {
+      "title": "Build the authorize redirect",
+      "detail": "Send users to https://api.notion.com/v1/oauth/authorize with client_id, redirect_uri, response_type=code, owner=user, and a state value for CSRF protection.",
+      "actor": "agent",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" }
+    },
+    {
+      "title": "Exchange the code for tokens",
+      "detail": "POST to https://api.notion.com/v1/oauth/token with HTTP Basic auth (CLIENT_ID:CLIENT_SECRET) and grant_type=authorization_code. Store access_token, refresh_token, bot_id and workspace_id.",
+      "actor": "agent",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" }
+    },
+    {
+      "title": "Handle cancel and refresh",
+      "detail": "On cancel the redirect carries error=access_denied. Refresh with grant_type=refresh_token; each refresh returns a new access token and a new refresh token.",
+      "actor": "agent",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" }
+    },
+    {
+      "title": "Test with your own workspace",
+      "detail": "Click Connect, share a page in the picker, and confirm an API call works on that page.",
+      "actor": "you",
+      "evidence": { "label": "Uncertain", "url": null, "note": "General testing advice; not a documented step." }
+    },
+    {
+      "title": "(Optional) Draft a Marketplace listing",
+      "detail": "Listing name and description, category and tags, images and logo, and the public connection to link. Save it as a draft.",
+      "actor": "agent",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/marketplace-listing" }
+    },
+    {
+      "title": "(Optional) Submit the listing and wait",
+      "detail": "Submit from Listings > Connections. Notion says to expect an email within 5–10 business days; if changes are needed, fix and resubmit.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/marketplace-listing" }
+    }
+  ],
+  "requirements": [
+    { "item": "Redirect URI", "status": "required", "detail": "Set under the OAuth configuration section when creating the public connection.", "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" } },
+    { "item": "Installation scope", "status": "required", "detail": "Any workspace or Selected workspaces only. Permanent.", "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" } },
+    { "item": "Listing images and logo", "status": "conditional", "detail": "Marketplace listing only.", "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/marketplace-listing" } },
+    { "item": "Category, tags, description", "status": "conditional", "detail": "Marketplace listing only.", "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/marketplace-listing" } },
+    { "item": "Privacy policy", "status": "unknown", "detail": "Not mentioned in the three pages we checked.", "evidence": { "label": "Uncertain", "url": null } },
+    { "item": "Demo video", "status": "unknown", "detail": "Not mentioned in the three pages we checked.", "evidence": { "label": "Uncertain", "url": null } },
+    { "item": "Business entity / verified domain", "status": "unknown", "detail": "Not mentioned in the three pages we checked.", "evidence": { "label": "Uncertain", "url": null } }
+  ],
+  "scopes": {
+    "triggerReview": [],
+    "noReview": [
+      { "scope": "Page-level access (page picker)", "why": "Notion has no OAuth scopes. Users choose which pages and databases to share; parent pages share their children.", "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" } },
+      { "scope": "Connection capabilities", "why": "The consent prompt describes what the connection can do in the workspace. No review is tied to them in the pages we checked.", "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" } }
+    ],
+    "tip": "Ask users to share only the pages your agent needs, or offer a template the connection duplicates and gets access to automatically."
+  },
+  "scopeAdvisor": [
+    {
+      "need": "Your agent only works in a few pages",
+      "use": "Template option (duplicate a starter page)",
+      "insteadOf": "Asking users to share a whole top-level page",
+      "why": "With a template, Notion adds the connection, duplicates the page and shares it with the connection automatically, so access stays narrow.",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" }
+    },
+    {
+      "need": "Only you (or your team) will use it",
+      "use": "Personal access token or internal connection",
+      "insteadOf": "Public connection",
+      "why": "No OAuth flow and no page picker; you can start right away.",
+      "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" }
+    }
+  ],
+  "timeline": [
+    { "phase": "setup", "label": "Create public connection and build OAuth", "duration": "An hour or two", "kind": "active", "evidence": { "label": "Uncertain", "url": null, "note": "Our estimate; Notion gives no time." } },
+    { "phase": "test", "label": "Test in your own workspace", "duration": "Same day", "kind": "active", "evidence": { "label": "Uncertain", "url": null, "note": "Our estimate." } },
+    { "phase": "review", "label": "Marketplace review (optional)", "duration": "5–10 business days", "kind": "waiting", "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/marketplace-listing" } },
+    { "phase": "production", "label": "Live for any workspace via OAuth", "duration": "No listing needed", "kind": "none", "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/marketplace-listing" } }
+  ],
+  "blockers": [
+    { "reason": "Wrong installation scope", "fix": "It can't be changed after creation. Create a new public connection with 'Any workspace' if you want a Marketplace listing.", "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/marketplace-listing" } },
+    { "reason": "Token exchange fails on redirect_uri", "fix": "Include redirect_uri in the token request if you passed it in the authorize URL or have more than one configured; otherwise leave it out.", "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" } },
+    { "reason": "Connection can't see a page", "fix": "The user must share it in the page picker, and they need full access to that page to share it.", "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" } },
+    { "reason": "Marketplace listing rejected", "fix": "Reasons include brand/trademark issues, quality concerns, or missing baseline criteria. Read Notion's email, fix, and resubmit.", "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/marketplace-listing" } }
+  ],
+  "composio": {
+    "managed": "yes",
+    "toolkit": "NOTION",
+    "note": "Composio's toolkit API lists a managed OAuth app for Notion, so you can prototype without creating your own public connection.",
+    "evidence": { "label": "Docs", "url": "https://docs.composio.dev/toolkits/managed-auth", "note": "Checked via Composio's toolkit API (composio_managed_auth_schemes) on 2026-10-28." }
+  },
+  "portalObservation": null,
+  "sources": [
+    "https://developers.notion.com/guides/get-started/authorization",
+    "https://developers.notion.com/guides/get-started/marketplace-listing",
+    "https://developers.notion.com/workers/guides/oauth",
+    "https://docs.composio.dev/toolkits/managed-auth"
+  ],
+  "lastChecked": "2026-10-28"
+}

@@ -1,0 +1,466 @@
+{
+  "method": "For each app with a library guide, generate a guide with the agent (bypassing the library), then compare claim by claim. Match = same fact; Wrong = the agent contradicts the library; Missed = the library has it and the agent doesn't.",
+  "apps": [
+    {
+      "slug": "github",
+      "name": "GitHub",
+      "runs": []
+    },
+    {
+      "slug": "slack",
+      "name": "Slack",
+      "runs": []
+    },
+    {
+      "slug": "gmail",
+      "name": "Google Gmail",
+      "runs": []
+    },
+    {
+      "slug": "linkedin",
+      "name": "LinkedIn",
+      "runs": []
+    },
+    {
+      "slug": "notion",
+      "name": "Notion",
+      "runs": [
+        {
+          "label": "v1 (before prompt fixes)",
+          "agentRun": "2026-10-28",
+          "note": "Agent run outside the library: 3 official pages, 40 facts extracted, 37 quotes verified, 35,743 tokens, 203s, $0 (nvidia/nemotron-3.5-super-vl:free for every call).",
+          "rows": [
+            {
+              "claim": "Difficulty",
+              "library": "Medium: works without review; only the optional Marketplace listing is reviewed.",
+              "agent": "Medium: OAuth works without review; Marketplace listing triggers review.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Time to first test",
+              "library": "Minutes with a PAT or internal connection; a public connection takes a little longer.",
+              "agent": "Public connections work immediately via OAuth.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Time to production (verdict field)",
+              "library": "Works via OAuth without a listing; Marketplace reply in 5–10 business days.",
+              "agent": "Filled with an unrelated fact about installation scope instead of a time estimate.",
+              "verdict": "wrong"
+            },
+            {
+              "claim": "Marketplace review time",
+              "library": "5–10 business days, by email.",
+              "agent": "5–10 business days (in a step, not the verdict).",
+              "verdict": "match"
+            },
+            {
+              "claim": "Marketplace listing is optional",
+              "library": "Optional; public connections work through OAuth without it.",
+              "agent": "Optional; public connections work without a listing.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Installation scope is permanent",
+              "library": "Any workspace / Selected workspaces only can't be changed; only Any workspace can be listed.",
+              "agent": "Same, stated in steps and tip.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Authorization URL appears after review submission",
+              "library": "Flagged as unclear: docs say the field populates after submission for review; timing unknown.",
+              "agent": "Mentioned inside the Marketplace review step, without flagging the open question.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Each user authorizes separately",
+              "library": "Yes, each workspace member goes through the auth flow.",
+              "agent": "Yes.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Page picker shows only full-access pages",
+              "library": "Yes.",
+              "agent": "Yes.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Token exchange",
+              "library": "POST /v1/oauth/token with HTTP Basic CLIENT_ID:CLIENT_SECRET, grant_type=authorization_code.",
+              "agent": "POST /v1/oauth/token with CLIENT_ID:CLIENT_SECRET.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Refresh tokens",
+              "library": "Refresh returns a new access token and a new refresh token.",
+              "agent": "Same.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Listing details",
+              "library": "Name, description, category/tags, images/logo, linked connection.",
+              "agent": "Same, plus optional template URL.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Rejection reasons",
+              "library": "Brand/trademark, quality, baseline criteria; fix and resubmit.",
+              "agent": "Same.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Composio managed OAuth",
+              "library": "Yes.",
+              "agent": "Yes (from the same API check).",
+              "verdict": "match"
+            },
+            {
+              "claim": "OAuth scopes",
+              "library": "Notion has no OAuth scopes; access is per page via the page picker.",
+              "agent": "Blocker says scope names weren't found and to look them up, implying scopes exist.",
+              "verdict": "wrong"
+            },
+            {
+              "claim": "Notion Workers OAuth page",
+              "library": "Not about connecting to Notion; noted as a common confusion.",
+              "agent": "Turned Worker deploy order and Worker client-secret rules into setup steps for a Notion app.",
+              "verdict": "wrong"
+            },
+            {
+              "claim": "Scope tip",
+              "library": "Ask users to share only needed pages, or use a template.",
+              "agent": "Start with 'Selected workspaces only' to avoid the Marketplace, which would block installs from other workspaces.",
+              "verdict": "wrong"
+            },
+            {
+              "claim": "Authorize URL parameters",
+              "library": "client_id, redirect_uri, response_type=code, owner=user, optional state for CSRF.",
+              "agent": "Only response_type=code and redirect URI.",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Cancel / access_denied handling",
+              "library": "Cancel redirects with error=access_denied.",
+              "agent": "Not mentioned.",
+              "verdict": "missed"
+            },
+            {
+              "claim": "redirect_uri rule in token exchange",
+              "library": "Required if passed in the authorize URL or if several are configured; otherwise not allowed.",
+              "agent": "Not mentioned.",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Personal access token / internal connection alternative",
+              "library": "Use these to act in your own workspace with no OAuth flow.",
+              "agent": "Not mentioned.",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Template option",
+              "library": "Connection can duplicate a template page and get access to it automatically.",
+              "agent": "Not mentioned (only as a listing field).",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Requirements checklist",
+              "library": "7 items (redirect URI, installation scope, listing assets; privacy policy etc. unknown).",
+              "agent": "Empty.",
+              "verdict": "missed"
+            }
+          ]
+        },
+        {
+          "label": "v2 (after)",
+          "agentRun": "2026-10-28",
+          "note": "Same 3 pages after the prompt fixes. Page 1 (Authorization) returned 0 facts, page 2 (Marketplace) 15/15 verified, page 3 (Workers) 0 as intended. 23,709 tokens, 153s, $0, nvidia/nemotron-3.5-super-vl:free.",
+          "rows": [
+            {
+              "claim": "Difficulty",
+              "library": "Medium: works without review; only the optional Marketplace listing is reviewed.",
+              "agent": "Medium: Notion reviews every listing; listing is optional.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Time to first test",
+              "library": "Minutes with a PAT or internal connection; a public connection takes a little longer.",
+              "agent": "\"Not documented\" (Uncertain).",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Time to production (verdict field)",
+              "library": "Works via OAuth without a listing; Marketplace reply in 5–10 business days.",
+              "agent": "5–10 business days (Docs). Now a duration, as required.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Marketplace review time",
+              "library": "5–10 business days, by email.",
+              "agent": "5–10 business days.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Marketplace listing is optional",
+              "library": "Optional; public connections work through OAuth without it.",
+              "agent": "Optional; usable via OAuth without a listing.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Installation scope is permanent",
+              "library": "Any workspace / Selected workspaces only can't be changed; only Any workspace can be listed.",
+              "agent": "Same.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Authorization URL appears after review submission",
+              "library": "Flagged as unclear: docs say the field populates after submission for review.",
+              "agent": "Not mentioned (the Authorization page returned 0 facts).",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Each user authorizes separately",
+              "library": "Yes, each workspace member goes through the auth flow.",
+              "agent": "Not mentioned.",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Page picker shows only full-access pages",
+              "library": "Yes.",
+              "agent": "Not mentioned.",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Token exchange",
+              "library": "POST /v1/oauth/token with HTTP Basic CLIENT_ID:CLIENT_SECRET, grant_type=authorization_code.",
+              "agent": "Not mentioned; client credentials marked unknown.",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Refresh tokens",
+              "library": "Refresh returns a new access token and a new refresh token.",
+              "agent": "Not mentioned.",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Listing details",
+              "library": "Name, description, category/tags, images/logo, linked connection.",
+              "agent": "Same.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Rejection reasons",
+              "library": "Brand/trademark, quality, baseline criteria; fix and resubmit.",
+              "agent": "Same.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Composio managed OAuth",
+              "library": "Yes.",
+              "agent": "Yes.",
+              "verdict": "match"
+            },
+            {
+              "claim": "OAuth scopes",
+              "library": "Notion has no OAuth scopes; access is per page via the page picker.",
+              "agent": "Says the facts don't name scopes; no longer tells the reader to look them up, but doesn't describe the page-level access model.",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Notion Workers OAuth page",
+              "library": "Not about connecting to Notion.",
+              "agent": "Correctly ignored (0 facts from that page).",
+              "verdict": "match"
+            },
+            {
+              "claim": "Scope tip",
+              "library": "Ask users to share only needed pages, or use a template.",
+              "agent": "Use 'Any workspace' and don't restrict to 'Selected workspaces only' just to avoid listing.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Authorize URL parameters",
+              "library": "client_id, redirect_uri, response_type=code, owner=user, optional state for CSRF.",
+              "agent": "Not mentioned.",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Cancel / access_denied handling",
+              "library": "Cancel redirects with error=access_denied.",
+              "agent": "Not mentioned.",
+              "verdict": "missed"
+            },
+            {
+              "claim": "redirect_uri rule in token exchange",
+              "library": "Required if passed in the authorize URL or if several are configured; otherwise not allowed.",
+              "agent": "Not mentioned; redirect URI marked unknown.",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Personal access token / internal connection alternative",
+              "library": "Use these to act in your own workspace with no OAuth flow.",
+              "agent": "Not mentioned.",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Template option",
+              "library": "Connection can duplicate a template page and get access to it automatically.",
+              "agent": "Not mentioned.",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Requirements checklist",
+              "library": "7 items (redirect URI, installation scope, listing assets; privacy policy etc. unknown).",
+              "agent": "6 items: installation scope and listing assets match; redirect URI, credentials and domain verification marked unknown.",
+              "verdict": "match"
+            }
+          ]
+        },
+        {
+          "label": "v3 (narrowed skip rule)",
+          "agentRun": "2026-10-28",
+          "note": "Same 3 pages. Page 1 (Authorization) was no longer skipped, but the model reasoned past the 8,000-token output cap twice (Nemotron, then the dots fallback), so it still produced 0 facts. Page 2: 15/15 verified; page 3 (Workers): 0 as intended. 5 requests, 29,863 tokens, 339s, $0.",
+          "rows": [
+            {
+              "claim": "Difficulty",
+              "library": "Medium: works without review; only the optional Marketplace listing is reviewed.",
+              "agent": "Medium: Marketplace listing optional; public connection works via OAuth.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Time to first test",
+              "library": "Minutes with a PAT or internal connection; a public connection takes a little longer.",
+              "agent": "\"Not documented\" (Uncertain).",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Time to production (verdict field)",
+              "library": "Works via OAuth without a listing; Marketplace reply in 5–10 business days.",
+              "agent": "\"Not documented\" (Uncertain), though 5–10 business days appears in a callout.",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Marketplace review time",
+              "library": "5–10 business days, by email.",
+              "agent": "5–10 business days, in a callout.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Marketplace listing is optional",
+              "library": "Optional; public connections work through OAuth without it.",
+              "agent": "Optional; works via OAuth without a listing.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Installation scope is permanent",
+              "library": "Any workspace / Selected workspaces only can't be changed; only Any workspace can be listed.",
+              "agent": "Same.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Authorization URL appears after review submission",
+              "library": "Flagged as unclear: docs say the field populates after submission for review.",
+              "agent": "Not mentioned (the Authorization page produced no facts).",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Each user authorizes separately",
+              "library": "Yes, each workspace member goes through the auth flow.",
+              "agent": "Not mentioned (the Authorization page produced no facts).",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Page picker shows only full-access pages",
+              "library": "Yes.",
+              "agent": "Not mentioned (the Authorization page produced no facts).",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Token exchange",
+              "library": "POST /v1/oauth/token with HTTP Basic CLIENT_ID:CLIENT_SECRET, grant_type=authorization_code.",
+              "agent": "Not mentioned (the Authorization page produced no facts).",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Refresh tokens",
+              "library": "Refresh returns a new access token and a new refresh token.",
+              "agent": "Not mentioned (the Authorization page produced no facts).",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Listing details",
+              "library": "Name, description, category/tags, images/logo, linked connection.",
+              "agent": "Images and logo, draft and submit flow (name/description not listed).",
+              "verdict": "match"
+            },
+            {
+              "claim": "Rejection reasons",
+              "library": "Brand/trademark, quality, baseline criteria; fix and resubmit.",
+              "agent": "Same.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Composio managed OAuth",
+              "library": "Yes.",
+              "agent": "Yes.",
+              "verdict": "match"
+            },
+            {
+              "claim": "OAuth scopes",
+              "library": "Notion has no OAuth scopes; access is per page via the page picker.",
+              "agent": "No scope names and no page-level access model described.",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Notion Workers OAuth page",
+              "library": "Not about connecting to Notion.",
+              "agent": "Correctly ignored (0 facts).",
+              "verdict": "match"
+            },
+            {
+              "claim": "Scope tip",
+              "library": "Ask users to share only needed pages, or use a template.",
+              "agent": "Use 'Any workspace'; don't restrict to 'Selected workspaces only' just to avoid listing.",
+              "verdict": "match"
+            },
+            {
+              "claim": "Authorize URL parameters",
+              "library": "client_id, redirect_uri, response_type=code, owner=user, optional state for CSRF.",
+              "agent": "Not mentioned (the Authorization page produced no facts).",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Cancel / access_denied handling",
+              "library": "Cancel redirects with error=access_denied.",
+              "agent": "Not mentioned (the Authorization page produced no facts).",
+              "verdict": "missed"
+            },
+            {
+              "claim": "redirect_uri rule in token exchange",
+              "library": "Required if passed in the authorize URL or if several are configured; otherwise not allowed.",
+              "agent": "Not mentioned (the Authorization page produced no facts).",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Personal access token / internal connection alternative",
+              "library": "Use these to act in your own workspace with no OAuth flow.",
+              "agent": "Not mentioned (the Authorization page produced no facts).",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Template option",
+              "library": "Connection can duplicate a template page and get access to it automatically.",
+              "agent": "Not mentioned (the Authorization page produced no facts).",
+              "verdict": "missed"
+            },
+            {
+              "claim": "Requirements checklist",
+              "library": "7 items (redirect URI, installation scope, listing assets; privacy policy etc. unknown).",
+              "agent": "6 items: public connection, permanent scope, Any workspace, listing images; redirect URI and credentials unknown.",
+              "verdict": "match"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

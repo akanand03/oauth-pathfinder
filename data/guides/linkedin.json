@@ -1,0 +1,240 @@
+{
+  "slug": "linkedin",
+  "name": "LinkedIn",
+  "website": "https://www.linkedin.com",
+  "kind": "library",
+  "verdict": {
+    "difficulty": "Gated",
+    "timeToFirstTest": {
+      "text": "Sign-in: minutes. Community Management (company-page posting): only after Development tier approval.",
+      "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/sign-in-with-linkedin-v2" }
+    },
+    "timeToProduction": {
+      "text": "No published timeline. Standard tier requires a second application, and LinkedIn can decline even when you meet every requirement.",
+      "evidence": { "label": "Uncertain", "url": "https://learn.microsoft.com/linkedin/marketing/increasing-access", "note": "LinkedIn publishes no review SLA for Community Management." }
+    },
+    "summary": "Basic sign-in is self-serve. Posting to company pages is gated: only registered legal organizations with commercial use cases qualify, there are two review tiers, and approval is at LinkedIn's discretion."
+  },
+  "callouts": [
+    {
+      "text": "Community Management API is only available to registered legal organizations for commercial use cases. Personal email addresses won't pass vetting.",
+      "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review" }
+    },
+    {
+      "text": "Community Management must be the only product on its developer app. If the app has other products or pending requests, the request button is greyed out, so create a new app.",
+      "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/shared/linkedin-api-partner-support-guide" }
+    },
+    {
+      "text": "LinkedIn may decline to upgrade a partner even if the minimum requirements are met.",
+      "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/linkedin/marketing/increasing-access" }
+    },
+    {
+      "text": "If rejected, you can't reapply with the same app. You must create a new app and start from the Development tier.",
+      "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review" }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Create a LinkedIn Page for your company",
+      "detail": "The developer app must be associated with, and verified by, your organization's Page.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/quick-start" }
+    },
+    {
+      "title": "Create a developer app",
+      "detail": "At linkedin.com/developers/apps/new. The app name can't include LinkedIn or Microsoft names or logos.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review" }
+    },
+    {
+      "title": "Have a Page super admin verify the app",
+      "detail": "A super admin of your Page must approve the app association.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review" }
+    },
+    {
+      "title": "Add 'Sign In with LinkedIn using OpenID Connect' (self-serve)",
+      "detail": "Request it from the Products tab. Scopes openid, profile, email. Enough for login and basic profile.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/sign-in-with-linkedin-v2" }
+    },
+    {
+      "title": "Implement OIDC sign-in and test",
+      "detail": "Build the authorization code flow and validate the ID token against LinkedIn's discovery document.",
+      "actor": "agent",
+      "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/sign-in-with-linkedin-v2" }
+    },
+    {
+      "title": "(Company posting) Create a separate app for Community Management",
+      "detail": "Community Management must be the only product on its app. Use the same company Page.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/shared/linkedin-api-partner-support-guide" }
+    },
+    {
+      "title": "(Company posting) Submit the Development tier access request",
+      "detail": "Provide a verified business email, the organization's legal name, registered address, website, and privacy policy. Complete the vetting survey within 21 days.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review" }
+    },
+    {
+      "title": "(Company posting) Build within Development tier limits",
+      "detail": "500 calls/app/day, 100 calls/member/day, no BATCH_GET, no webhooks. Finish the integration within 12 months.",
+      "actor": "agent",
+      "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/linkedin/marketing/increasing-access" }
+    },
+    {
+      "title": "(Company posting) Record screencast and apply for Standard tier",
+      "detail": "Record a high-res, downloadable, narrated screencast of each use case (OAuth, posting, how comments and member data are displayed), and provide test credentials.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review" }
+    },
+    {
+      "title": "Wait for a decision",
+      "detail": "No SLA is published. LinkedIn emails your business address if it needs more information.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/shared/linkedin-api-partner-support-guide" }
+    }
+  ],
+  "requirements": [
+    { "item": "LinkedIn company Page", "status": "required", "detail": "The app must be associated with a Page and verified by its super admin.", "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/quick-start" } },
+    { "item": "Business entity (registered legal org)", "status": "conditional", "detail": "Required for Community Management API.", "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review" } },
+    { "item": "Verified business email", "status": "conditional", "detail": "Community Management. Personal emails fail vetting.", "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review" } },
+    { "item": "Verified domain / website", "status": "conditional", "detail": "Community Management reviewers verify the organization's website and domain.", "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review" } },
+    { "item": "Privacy policy", "status": "conditional", "detail": "Required for both Community Management tiers. A valid policy is checked at the Standard tier.", "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review" } },
+    { "item": "Demo video (screencast)", "status": "conditional", "detail": "Standard tier only.", "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review" } },
+    { "item": "Logo", "status": "unknown", "detail": "The app creation form is believed to ask for a logo, but we didn't observe it (requires login).", "evidence": { "label": "Uncertain", "url": null } }
+  ],
+  "scopes": {
+    "triggerReview": [
+      { "scope": "w_organization_social, r_organization_social, rw_organization_admin, r_organization_followers, *_feed", "why": "Granted only through Community Management API access, which requires vetting and tiers.", "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/linkedin/marketing/increasing-access" } }
+    ],
+    "noReview": [
+      { "scope": "openid, profile, email", "why": "Sign In with LinkedIn using OpenID Connect. Self-serve product.", "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/sign-in-with-linkedin-v2" } },
+      { "scope": "w_member_social (via 'Share on LinkedIn')", "why": "Posting as the member, not a company. Believed to be self-serve.", "evidence": { "label": "Uncertain", "url": null, "note": "We didn't check an official page for this product this round." } }
+    ],
+    "tip": "If your agent only needs identity, ship Sign In with LinkedIn first. Start the Community Management application early, on a dedicated app, because approval is at LinkedIn's discretion."
+  },
+  "blockers": [
+    { "reason": "Not a registered legal organization / non-commercial use", "fix": "Apply as your company entity, not as an individual.", "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review" } },
+    { "reason": "Personal email address", "fix": "Use a business email on your company domain and verify it.", "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review" } },
+    { "reason": "Restricted use case", "fix": "Read LinkedIn's restricted use cases before applying. Don't scrape, resell, or build member profiles.", "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review" } },
+    { "reason": "Request button greyed out", "fix": "The app already has another product. Create a new app with only Community Management.", "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/shared/linkedin-api-partner-support-guide" } },
+    { "reason": "App name or logo uses LinkedIn branding", "fix": "Remove 'Linked', 'In', or LinkedIn/Microsoft logos from the app.", "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review" } },
+    { "reason": "Vetting survey not completed within 21 days", "fix": "The request is marked 'Insufficient Details'. Use Reapply to resubmit.", "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/shared/linkedin-api-partner-support-guide" } },
+    { "reason": "Screencast doesn't show every declared use case", "fix": "Follow the per-use-case checklist and note any functionality you don't have.", "evidence": { "label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review" } }
+  ],
+  "scopeAdvisor": [
+    {
+      "need": "Only need sign-in and basic profile",
+      "use": "openid, profile, email (Sign In with LinkedIn)",
+      "insteadOf": "Community Management API scopes",
+      "why": "Sign In with LinkedIn is self-serve. Organization scopes require Community Management vetting and tiers.",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/sign-in-with-linkedin-v2"
+      }
+    },
+    {
+      "need": "Post as the member, not a company",
+      "use": "w_member_social (Share on LinkedIn)",
+      "insteadOf": "w_organization_social",
+      "why": "Organization posting needs Community Management access; member posting is believed to be self-serve.",
+      "evidence": {
+        "label": "Uncertain",
+        "url": null,
+        "note": "Share on LinkedIn being self-serve wasn't confirmed on an official page this round."
+      }
+    }
+  ],
+  "timeline": [
+    {
+      "phase": "setup",
+      "label": "Company Page, developer app, super-admin verification",
+      "duration": "A day or two",
+      "kind": "active",
+      "evidence": {
+        "label": "Uncertain",
+        "url": null,
+        "note": "Our estimate; depends on reaching your Page super admin."
+      }
+    },
+    {
+      "phase": "test",
+      "label": "Sign-in works immediately; company posting needs Development tier",
+      "duration": "Minutes (sign-in)",
+      "kind": "active",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/sign-in-with-linkedin-v2"
+      }
+    },
+    {
+      "phase": "review",
+      "label": "Development tier, then Standard tier application",
+      "duration": "No published timeline",
+      "kind": "waiting",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://learn.microsoft.com/linkedin/marketing/increasing-access"
+      }
+    },
+    {
+      "phase": "production",
+      "label": "Standard tier (can be declined)",
+      "duration": "At LinkedIn's discretion",
+      "kind": "none",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://learn.microsoft.com/linkedin/marketing/increasing-access"
+      }
+    }
+  ],
+  "drafts": {
+    "note": "Templates to edit. Replace every [bracketed] part and describe only what your app really does. LinkedIn checks the legal organization, website and privacy policy behind the request.",
+    "scopeJustification": [
+      {
+        "scope": "w_organization_social",
+        "text": "[Company legal name] builds [app name], an AI assistant that helps [marketing teams at B2B companies] publish posts to their own LinkedIn company Pages. A Page admin connects their Page, the assistant drafts a post, and the admin reviews and approves it before it's published. We need w_organization_social to publish approved posts to Pages the user administers. We don't post without explicit approval."
+      },
+      {
+        "scope": "r_organization_social",
+        "text": "[App name] shows Page admins the comments and engagement on posts it published, so they can [reply / see results] without leaving the app. We read only posts and comments for Pages the user administers, display them to that admin, and keep them for [retention period]."
+      }
+    ],
+    "demoVideoOutline": [
+      "Introduce the company and the product in one sentence; show your website and privacy policy.",
+      "Show the OAuth flow: click 'Connect LinkedIn', the LinkedIn consent screen with the requested permissions, and the redirect back.",
+      "Show each use case end to end: drafting a post, the admin approving it, and the post appearing on the company Page.",
+      "Show how comments and any member data are displayed in your app.",
+      "Show how a user disconnects and how data is deleted.",
+      "Narrate throughout, record in high resolution, and make the file downloadable for reviewers."
+    ],
+    "checklist": [
+      "The app is associated with your company Page and verified by a Page super admin.",
+      "Community Management is the only product on this developer app (create a new app if needed).",
+      "You use a verified business email, not a personal address.",
+      "The organization's legal name, registered address and website match public records.",
+      "A valid privacy policy is published on your domain.",
+      "You stayed within Development tier limits (500 calls/app/day, 100 calls/member/day).",
+      "The screencast covers every use case and is high-res, narrated and downloadable.",
+      "Test credentials for your app are ready for reviewers.",
+      "You know a rejection means starting over with a new app at the Development tier."
+    ]
+  },
+  "composio": {
+    "managed": "yes",
+    "toolkit": "LINKEDIN",
+    "note": "Composio lists LinkedIn as managed auth. LinkedIn Ads (LINKEDIN_ADS) is bring-your-own. Check which scopes the managed app has before relying on it for company-page posting.",
+    "evidence": { "label": "Docs", "url": "https://docs.composio.dev/toolkits/managed-auth" }
+  },
+  "portalObservation": null,
+  "sources": [
+    "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review",
+    "https://learn.microsoft.com/linkedin/marketing/increasing-access",
+    "https://learn.microsoft.com/en-us/linkedin/shared/linkedin-api-partner-support-guide",
+    "https://learn.microsoft.com/en-us/linkedin/marketing/quick-start",
+    "https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/sign-in-with-linkedin-v2",
+    "https://docs.composio.dev/toolkits/managed-auth"
+  ],
+  "lastChecked": "2026-10-28"
+}

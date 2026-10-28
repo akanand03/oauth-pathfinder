@@ -1,0 +1,211 @@
+{
+  "checkedOn": "2026-10-28",
+  "method": "Each provided fact was re-read against the live source page on the check date. Facts without an official page were searched for; anything we couldn't find stays Uncertain.",
+  "checked": [
+    {
+      "guide": "github",
+      "claim": "No approval needed; form asks for name, homepage URL, optional description, callback URL",
+      "result": "Confirmed",
+      "source": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+    },
+    {
+      "guide": "github",
+      "claim": "GitHub recommends GitHub Apps (fine-grained permissions, short-lived tokens)",
+      "result": "Confirmed",
+      "source": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+    },
+    {
+      "guide": "github",
+      "claim": "Max 100 OAuth apps per user or org",
+      "result": "Confirmed",
+      "source": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+    },
+    {
+      "guide": "slack",
+      "claim": "Marketplace review is manual and can't be accelerated",
+      "result": "Confirmed",
+      "source": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide"
+    },
+    {
+      "guide": "slack",
+      "claim": "Public distribution must be enabled before Marketplace submission",
+      "result": "Confirmed",
+      "source": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace"
+    },
+    {
+      "guide": "gmail",
+      "claim": "gmail.readonly and gmail.modify are restricted; gmail.send is sensitive",
+      "result": "Confirmed",
+      "source": "https://developers.google.com/workspace/gmail/api/auth/scopes"
+    },
+    {
+      "guide": "gmail",
+      "claim": "Restricted scopes need an annual security assessment (CASA)",
+      "result": "Confirmed",
+      "source": "https://support.google.com/cloud/answer/13465431"
+    },
+    {
+      "guide": "gmail",
+      "claim": "100-user cap before verification; Internal apps skip verification",
+      "result": "Confirmed",
+      "source": "https://support.google.com/cloud/answer/13464323"
+    },
+    {
+      "guide": "linkedin",
+      "claim": "Community Management only for registered legal orgs with commercial use cases",
+      "result": "Confirmed",
+      "source": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review"
+    },
+    {
+      "guide": "linkedin",
+      "claim": "Development tier first, then separate Standard tier with screen recording and privacy policy",
+      "result": "Confirmed",
+      "source": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management-app-review"
+    },
+    {
+      "guide": "linkedin",
+      "claim": "LinkedIn may reject even if minimum requirements are met",
+      "result": "Confirmed",
+      "source": "https://learn.microsoft.com/linkedin/marketing/increasing-access"
+    },
+    {
+      "guide": "all",
+      "claim": "Composio managed auth exists for GitHub, Slack, Gmail, LinkedIn",
+      "result": "Confirmed",
+      "source": "https://docs.composio.dev/toolkits/managed-auth"
+    },
+    {
+      "guide": "notion",
+      "claim": "Public connections use OAuth 2.0; PATs and internal connections use static tokens",
+      "result": "Confirmed",
+      "source": "https://developers.notion.com/guides/get-started/authorization"
+    },
+    {
+      "guide": "notion",
+      "claim": "Installation scope (Any workspace / Selected workspaces only) can't be changed after creation",
+      "result": "Confirmed",
+      "source": "https://developers.notion.com/guides/get-started/authorization"
+    },
+    {
+      "guide": "notion",
+      "claim": "Marketplace listing is optional; replies within 5–10 business days",
+      "result": "Confirmed",
+      "source": "https://developers.notion.com/guides/get-started/marketplace-listing"
+    },
+    {
+      "guide": "notion",
+      "claim": "Composio has a managed OAuth app for Notion",
+      "result": "Confirmed via Composio toolkit API",
+      "source": "https://docs.composio.dev/toolkits/managed-auth"
+    }
+  ],
+  "corrected": [
+    {
+      "guide": "github",
+      "original": "OAuth apps support only one callback URL.",
+      "corrected": "GitHub's docs now say you can enter up to 10 callback URLs.",
+      "source": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+    },
+    {
+      "guide": "github",
+      "original": "Form asks for name, homepage, description, callback URL.",
+      "corrected": "The form also has 'Enable Device Flow' and 'Expire user access tokens' (on by default).",
+      "source": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+    },
+    {
+      "guide": "slack",
+      "original": "Incomplete submissions are returned and lose queue position.",
+      "corrected": "Refined: resubmitting during preliminary review resets your place. Once a functional reviewer is assigned, resubmitting doesn't.",
+      "source": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide"
+    },
+    {
+      "guide": "slack",
+      "original": "(not in brief)",
+      "corrected": "Added hard prerequisites: at least 10 workspaces active in the past 28 days, and Slack's published windows of up to 10 business days (preliminary) plus up to 10 weeks (functional).",
+      "source": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide"
+    },
+    {
+      "guide": "gmail",
+      "original": "Most Gmail scopes (including gmail.readonly, gmail.modify) are restricted.",
+      "corrected": "Made exact: gmail.compose, gmail.metadata, gmail.insert, and gmail.settings.* are also restricted; gmail.labels is non-sensitive.",
+      "source": "https://developers.google.com/workspace/gmail/api/auth/scopes"
+    },
+    {
+      "guide": "gmail",
+      "original": "Up to 100 test users before verification.",
+      "corrected": "Added that the cap is lifetime and can't be reset, and Testing-mode tokens expire after 7 days (third-party source).",
+      "source": "https://nango.dev/docs/api-integrations/google-shared/google-security-review"
+    },
+    {
+      "guide": "gmail",
+      "original": "gmail.send is a restricted scope that needs a CASA assessment.",
+      "corrected": "gmail.send is sensitive, not restricted: it needs verification (justification and demo video) but no CASA.",
+      "source": "https://developers.google.com/workspace/gmail/api/auth/scopes"
+    },
+    {
+      "guide": "linkedin",
+      "original": "Community Management can be added alongside other products on an existing app.",
+      "corrected": "Community Management must be the only product on its developer app; otherwise the request button is greyed out. Create a dedicated app. (This rule is on the Partner Support Guide, not the app-review page.)",
+      "source": "https://learn.microsoft.com/en-us/linkedin/shared/linkedin-api-partner-support-guide"
+    },
+    {
+      "guide": "slack",
+      "original": "Slack Marketplace review takes about 4 months.",
+      "corrected": "Slack publishes up to 10 business days (preliminary) plus up to 10 weeks (functional). Review can be slow, but the 4-month figure is one anecdotal report and is labeled Uncertain.",
+      "source": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide"
+    }
+  ],
+  "uncertain": [
+    {
+      "guide": "slack",
+      "claim": "A Marketplace review took about 4 months",
+      "why": "A single developer anecdote. Slack publishes up to ~10 weeks for functional review."
+    },
+    {
+      "guide": "gmail",
+      "claim": "CASA cost ($540 to $3,000+)",
+      "why": "Vendor pricing from a third party (Nango, Aug 2025). Google doesn't publish prices."
+    },
+    {
+      "guide": "gmail",
+      "claim": "Review durations (under a week sensitive; 4–6 weeks restricted)",
+      "why": "From third-party docs. Google publishes no SLA."
+    },
+    {
+      "guide": "linkedin",
+      "claim": "Community Management review timeline",
+      "why": "LinkedIn publishes no SLA for this product."
+    },
+    {
+      "guide": "linkedin",
+      "claim": "Developer app creation form fields (logo, privacy URL)",
+      "why": "The form requires login. We didn't create accounts, so we didn't observe it."
+    },
+    {
+      "guide": "linkedin",
+      "claim": "w_member_social via 'Share on LinkedIn' is self-serve",
+      "why": "Not checked against an official page this round."
+    },
+    {
+      "guide": "all",
+      "claim": "Whether Composio's managed apps are suitable for production branding",
+      "why": "The managed-auth page doesn't address it."
+    },
+    {
+      "guide": "notion",
+      "claim": "Whether a public connection needs review before its Authorization URL works",
+      "why": "The docs say the field populates after the connection is submitted for review, but give no timing or approval criteria. Not tested."
+    },
+    {
+      "guide": "notion",
+      "claim": "Privacy policy, demo video, business entity requirements",
+      "why": "Not mentioned in the three Notion pages we checked."
+    },
+    {
+      "guide": "notion",
+      "claim": "Setup and test time estimates",
+      "why": "Our estimates; Notion publishes no times."
+    }
+  ],
+  "manualTests": []
+}

@@ -1,0 +1,195 @@
+{
+  "slug": "slack",
+  "name": "Slack",
+  "website": "https://slack.com",
+  "kind": "library",
+  "verdict": {
+    "difficulty": "Medium",
+    "timeToFirstTest": {
+      "text": "About 15 minutes in your own workspace",
+      "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace", "note": "Estimate: installing to your own workspace needs no review." }
+    },
+    "timeToProduction": {
+      "text": "Immediate with public distribution. Marketplace listing takes up to 10 business days (preliminary review) plus up to 10 weeks (functional review).",
+      "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide" }
+    },
+    "summary": "It works in your workspace right away, and public distribution lets any workspace install it. The Slack Marketplace is optional, but its review is slow and strict."
+  },
+  "callouts": [
+    {
+      "text": "You don't need the Marketplace for a 'Connect Slack' button. With public distribution turned on, any workspace can install the app through your OAuth link.",
+      "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace" }
+    },
+    {
+      "text": "Marketplace review can't be skipped or sped up for a launch date.",
+      "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide" }
+    },
+    {
+      "text": "One developer reported a Marketplace review that took about 4 months.",
+      "evidence": { "label": "Uncertain", "url": null, "note": "Anecdotal. Not in any Slack documentation. Slack's published windows are 10 business days plus up to 10 weeks." }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Write an app manifest",
+      "detail": "Define the bot/user scopes, redirect URLs, and features in a manifest (YAML/JSON) so you can recreate the app consistently.",
+      "actor": "agent",
+      "evidence": { "label": "Docs", "url": "https://docs.slack.dev/app-manifests" }
+    },
+    {
+      "title": "Create the app at api.slack.com/apps",
+      "detail": "Sign in, choose 'From a manifest', and pick your development workspace.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://docs.slack.dev/app-manifests" }
+    },
+    {
+      "title": "Install to your workspace and test",
+      "detail": "Install the app to your own workspace. You can call the API right away; no review is needed.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace" }
+    },
+    {
+      "title": "Implement OAuth v2 install flow",
+      "detail": "Build the 'Add to Slack' redirect and the callback that exchanges the code at oauth.v2.access. Store tokens per workspace.",
+      "actor": "agent",
+      "evidence": { "label": "Docs", "url": "https://docs.slack.dev/authentication/installing-with-oauth" }
+    },
+    {
+      "title": "Enable public distribution",
+      "detail": "In app settings → Manage Distribution, complete the checklist and turn on public distribution. Other workspaces can't install the app until you do, and the Marketplace requires it.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace" }
+    },
+    {
+      "title": "(Optional, Marketplace) Reach 10 active workspaces",
+      "detail": "The Marketplace requires at least 10 workspaces active in the past 28 days, and the app must be out of private beta.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide" }
+    },
+    {
+      "title": "(Optional, Marketplace) Prepare listing assets",
+      "detail": "Draft a public landing page, a support page (2-business-day response target), a privacy policy covering data collection, retention and deletion, 1600×1000 images, and a justification for each scope.",
+      "actor": "agent",
+      "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace" }
+    },
+    {
+      "title": "(Optional, Marketplace) Record demo video and provide test credentials",
+      "detail": "Show install, OAuth, setup, end-to-end use, and uninstall. Provide test credentials for your service; Slack doesn't accept Slack workspace credentials.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide" }
+    },
+    {
+      "title": "(Optional, Marketplace) Submit and wait",
+      "detail": "Preliminary review takes up to 10 business days. Functional review takes up to 10 weeks for new apps.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide" }
+    }
+  ],
+  "requirements": [
+    { "item": "Redirect URL(s)", "status": "required", "detail": "Needed for the OAuth v2 install flow.", "evidence": { "label": "Docs", "url": "https://docs.slack.dev/authentication/installing-with-oauth" } },
+    { "item": "Public distribution enabled", "status": "conditional", "detail": "Needed for installs outside your workspace and for the Marketplace.", "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace" } },
+    { "item": "Privacy policy", "status": "conditional", "detail": "Marketplace only. Must cover data collection, use, retention, and deletion requests.", "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace" } },
+    { "item": "Public landing + support page", "status": "conditional", "detail": "Marketplace only. The landing page can't be behind a login.", "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace" } },
+    { "item": "Demo video", "status": "conditional", "detail": "Marketplace only. Required for new submissions.", "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide" } },
+    { "item": "10+ active workspaces", "status": "conditional", "detail": "Marketplace only. Workspaces count as active if used in the past 28 days.", "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide" } },
+    { "item": "Logo / listing images", "status": "conditional", "detail": "Marketplace only. 1600×1000 jpg/png, under 2MB.", "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace" } },
+    { "item": "Verified domain", "status": "unknown", "detail": "Not mentioned in the Marketplace docs we checked.", "evidence": { "label": "Uncertain", "url": null } },
+    { "item": "Business entity", "status": "unknown", "detail": "Not stated as a requirement in the docs we checked. You must accept the Marketplace Agreement.", "evidence": { "label": "Uncertain", "url": null } }
+  ],
+  "scopes": {
+    "triggerReview": [
+      { "scope": "Any scope (Marketplace only)", "why": "Reviewers check the reason you give for each scope. Request scopes only for features that already exist, not planned ones.", "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide" } },
+      { "scope": "Legacy / restricted scopes, broad workspace-data scopes", "why": "Not accepted in Marketplace submissions.", "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide" } }
+    ],
+    "noReview": [
+      { "scope": "All scopes outside the Marketplace", "why": "Installing in your own workspace or through public distribution has no review.", "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace" } }
+    ],
+    "tip": "Start with a narrow bot scope set (e.g. chat:write, channels:read). Add scopes only when you ship the feature that needs them, so Marketplace reviewers can see each one being used."
+  },
+  "blockers": [
+    { "reason": "Submission not ready (private beta, untested, under construction)", "fix": "Submit only after end-to-end testing on a non-development workspace, including uninstall.", "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide" } },
+    { "reason": "Fewer than 10 active workspaces", "fix": "Grow installs through public distribution before you apply.", "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide" } },
+    { "reason": "Unclear scope reasons", "fix": "Write a specific, feature-linked reason for every scope, and drop any you don't use yet.", "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide" } },
+    { "reason": "Install or OAuth fails during the preliminary check", "fix": "Test the full install from a fresh workspace using the exact link you submit.", "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide" } },
+    { "reason": "Returned in preliminary review, which resets your queue position", "fix": "Each resubmission at the preliminary stage resets your place in the queue. Complete every item before the first submit. Once a functional reviewer is assigned, resubmitting doesn't reset your place.", "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide" } },
+    { "reason": "Missing listing info or low-quality images", "fix": "Check every listing field and image spec before submitting.", "evidence": { "label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace" } }
+  ],
+  "scopeAdvisor": [
+    {
+      "need": "Just a 'Connect Slack' button, no Marketplace",
+      "use": "Public distribution with any scopes",
+      "insteadOf": "A Marketplace listing",
+      "why": "With public distribution on, any workspace can install through your OAuth link. Scopes are only reviewed for the Marketplace.",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace"
+      }
+    },
+    {
+      "need": "Planning a Marketplace listing",
+      "use": "Only scopes for features that already exist",
+      "insteadOf": "Scopes for planned features, legacy or broad workspace-data scopes",
+      "why": "Reviewers check each scope's reason; legacy, restricted and broad workspace-data scopes aren't accepted.",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide"
+      }
+    }
+  ],
+  "timeline": [
+    {
+      "phase": "setup",
+      "label": "Create the app from a manifest",
+      "duration": "About 15 minutes",
+      "kind": "active",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace"
+      }
+    },
+    {
+      "phase": "test",
+      "label": "Install in your own workspace",
+      "duration": "Immediate",
+      "kind": "active",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace"
+      }
+    },
+    {
+      "phase": "review",
+      "label": "Marketplace review (optional)",
+      "duration": "Up to 10 business days + up to 10 weeks",
+      "kind": "waiting",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide",
+        "note": "Preliminary review up to 10 business days, functional review up to 10 weeks. One anecdotal report of ~4 months."
+      }
+    },
+    {
+      "phase": "production",
+      "label": "Any workspace via public distribution",
+      "duration": "Immediate, no review",
+      "kind": "none",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace"
+      }
+    }
+  ],
+  "composio": {
+    "managed": "yes",
+    "toolkit": "SLACK",
+    "note": "Composio provides a managed OAuth app for Slack (and Slackbot), so you can skip registration while prototyping.",
+    "evidence": { "label": "Docs", "url": "https://docs.composio.dev/toolkits/managed-auth" }
+  },
+  "portalObservation": null,
+  "sources": [
+    "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace",
+    "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide",
+    "https://docs.composio.dev/toolkits/managed-auth"
+  ],
+  "lastChecked": "2026-10-28"
+}

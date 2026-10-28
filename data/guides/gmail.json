@@ -1,0 +1,250 @@
+{
+  "slug": "gmail",
+  "name": "Google Gmail",
+  "website": "https://mail.google.com",
+  "kind": "library",
+  "verdict": {
+    "difficulty": "Hard",
+    "timeToFirstTest": {
+      "text": "Under an hour in Testing mode (up to 100 test users)",
+      "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464323", "note": "Testing apps are exempt from verification but subject to the 100-user cap." }
+    },
+    "timeToProduction": {
+      "text": "Sensitive scopes only (gmail.send): usually under a week. Restricted scopes (read or modify): about 4–6 weeks including a CASA security assessment, renewed every year.",
+      "evidence": { "label": "Docs", "url": "https://nango.dev/docs/api-integrations/google-shared/google-security-review", "note": "Third-party docs (Nango). Google publishes no fixed SLA." }
+    },
+    "summary": "Reading or modifying mail uses restricted scopes, which need verification plus a paid annual CASA assessment. If your agent only sends mail, gmail.send is merely sensitive and much faster."
+  },
+  "callouts": [
+    {
+      "text": "Key tip: gmail.send is only sensitive. It needs verification (scope justification and demo video) but no CASA security assessment.",
+      "evidence": { "label": "Docs", "url": "https://developers.google.com/workspace/gmail/api/auth/scopes" }
+    },
+    {
+      "text": "Internal apps (OAuth consent screen set to 'Internal', with the project owned by your Workspace org) skip verification and the 100-user cap, but only your org's users can sign in.",
+      "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464323" }
+    },
+    {
+      "text": "The 100-user cap counts every user who ever authorized the app and can't be reset. In Testing mode, tokens expire after 7 days.",
+      "evidence": { "label": "Docs", "url": "https://nango.dev/docs/api-integrations/google-shared/google-security-review", "note": "Third-party docs (Nango)." }
+    },
+    {
+      "text": "CASA cost depends on the assessor. Nango lists roughly $540–$720 (TAC Security) up to $3,000+ (others), as of August 2025.",
+      "evidence": { "label": "Uncertain", "url": "https://nango.dev/docs/api-integrations/google-shared/google-security-review", "note": "Vendor pricing changes and Google doesn't publish it." }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Create separate Google Cloud projects for dev and prod",
+      "detail": "Google says to keep testing apps separate from production and submit only the production project.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464323" }
+    },
+    {
+      "title": "Enable the Gmail API and configure the OAuth consent screen",
+      "detail": "Set app name, support email, logo, homepage, privacy policy, and authorized domains. Choose External, or Internal if Workspace-only.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464321" }
+    },
+    {
+      "title": "Pick the narrowest scopes",
+      "detail": "Map each agent feature to the lightest scope. Use gmail.send if you only send; gmail.readonly or gmail.modify move you to restricted.",
+      "actor": "agent",
+      "evidence": { "label": "Docs", "url": "https://developers.google.com/workspace/gmail/api/auth/scopes" }
+    },
+    {
+      "title": "Create an OAuth client ID and add test users",
+      "detail": "Create a Web application client with your redirect URIs. Add up to 100 test users.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464323" }
+    },
+    {
+      "title": "Implement the OAuth flow and test",
+      "detail": "Build the consent redirect and token exchange, and request offline access for refresh tokens.",
+      "actor": "agent",
+      "evidence": { "label": "Docs", "url": "https://developers.google.com/workspace/gmail/api/auth/scopes" }
+    },
+    {
+      "title": "Verify your domain and publish privacy policy",
+      "detail": "Brand verification checks that the homepage, privacy policy, and authorized domains belong to you. Verify domain ownership in Google Search Console.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464321" }
+    },
+    {
+      "title": "Write scope justifications",
+      "detail": "Explain why each sensitive or restricted scope is needed and why a narrower one won't do.",
+      "actor": "agent",
+      "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464321" }
+    },
+    {
+      "title": "Record the demo video",
+      "detail": "Show the end-to-end flow including the full consent screen with exact scopes (in English), and each feature using each scope.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464321" }
+    },
+    {
+      "title": "Submit for verification and wait",
+      "detail": "Google's Trust & Safety team reviews the submission and may email follow-up questions.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464321" }
+    },
+    {
+      "title": "(Restricted scopes) Complete CASA security assessment",
+      "detail": "Google contacts you when it's time. Hire an empanelled assessor, pass the scan and questionnaire, and get a Letter of Validation. Revalidate every year.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13465431" }
+    }
+  ],
+  "requirements": [
+    { "item": "Privacy policy", "status": "required", "detail": "On your verified domain and linked from the homepage.", "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464321" } },
+    { "item": "Verified domain", "status": "required", "detail": "Required for brand verification of authorized domains.", "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464321" } },
+    { "item": "Logo", "status": "conditional", "detail": "Shown on the consent screen. Setting one triggers brand verification.", "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464321" } },
+    { "item": "Demo video", "status": "conditional", "detail": "Required for sensitive and restricted scopes.", "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464321" } },
+    { "item": "Scope justification", "status": "conditional", "detail": "Required for sensitive and restricted scopes.", "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464321" } },
+    { "item": "CASA security assessment", "status": "conditional", "detail": "Restricted scopes only. Annual.", "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13465431" } },
+    { "item": "Business entity", "status": "unknown", "detail": "Not stated as a requirement in the pages we checked.", "evidence": { "label": "Uncertain", "url": null } }
+  ],
+  "scopes": {
+    "triggerReview": [
+      { "scope": "gmail.readonly, gmail.modify, gmail.compose, gmail.metadata, gmail.insert, gmail.settings.*, https://mail.google.com/", "why": "Restricted: verification plus annual CASA security assessment.", "evidence": { "label": "Docs", "url": "https://developers.google.com/workspace/gmail/api/auth/scopes" } },
+      { "scope": "gmail.send", "why": "Sensitive: verification (justification and demo video), no CASA.", "evidence": { "label": "Docs", "url": "https://developers.google.com/workspace/gmail/api/auth/scopes" } },
+      { "scope": "gmail.addons.current.message.metadata / .readonly", "why": "Sensitive (Workspace add-on scopes).", "evidence": { "label": "Docs", "url": "https://developers.google.com/workspace/gmail/api/auth/scopes" } }
+    ],
+    "noReview": [
+      { "scope": "gmail.labels", "why": "Non-sensitive.", "evidence": { "label": "Docs", "url": "https://developers.google.com/workspace/gmail/api/auth/scopes" } },
+      { "scope": "openid, email, profile", "why": "Non-sensitive sign-in scopes.", "evidence": { "label": "Uncertain", "url": null, "note": "Widely documented, but we didn't check it on an official page this round." } }
+    ],
+    "tip": "Ship v1 with gmail.send (sensitive, no CASA) and add read access later. Restricted scopes add weeks and a yearly paid audit."
+  },
+  "blockers": [
+    { "reason": "Demo video doesn't show the consent screen with exact scopes", "fix": "Record the full OAuth grant with the URL bar visible and the exact scopes listed, in English.", "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464321" } },
+    { "reason": "Requesting a broader scope than needed", "fix": "Justify why narrower scopes won't work, or switch to them (e.g. gmail.send).", "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464321" } },
+    { "reason": "Unverified domain or missing privacy policy", "fix": "Verify the domain in Search Console and host the privacy policy on it.", "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464321" } },
+    { "reason": "Use case not allowed under Limited Use policy", "fix": "Check your data use against the Google API Services User Data Policy. Training AI models needs explicit user consent shown in the demo video.", "evidence": { "label": "Docs", "url": "https://developers.google.com/terms/api-services-user-data-policy" } },
+    { "reason": "Submitted a project that mixes test and production", "fix": "Submit a dedicated production project.", "evidence": { "label": "Docs", "url": "https://support.google.com/cloud/answer/13464323" } },
+    { "reason": "CASA findings not remediated", "fix": "Fix scan findings and revalidate. Budget time for more than one round.", "evidence": { "label": "Docs", "url": "https://nango.dev/docs/api-integrations/google-shared/google-security-review", "note": "Third-party docs (Nango)." } }
+  ],
+  "scopeAdvisor": [
+    {
+      "need": "Only need to send email",
+      "use": "gmail.send",
+      "insteadOf": "gmail.readonly or gmail.modify",
+      "why": "gmail.send is sensitive: verification with justification and demo video, but no CASA. gmail.readonly and gmail.modify are restricted and need an annual CASA security assessment.",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://developers.google.com/workspace/gmail/api/auth/scopes"
+      }
+    },
+    {
+      "need": "Only need to organize with labels",
+      "use": "gmail.labels",
+      "insteadOf": "gmail.modify",
+      "why": "gmail.labels is non-sensitive; gmail.modify is restricted.",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://developers.google.com/workspace/gmail/api/auth/scopes"
+      }
+    },
+    {
+      "need": "Only users in your own Workspace org",
+      "use": "An Internal consent screen",
+      "insteadOf": "An External app going through verification",
+      "why": "Internal apps skip verification and the 100-user cap, but only your org's users can sign in.",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://support.google.com/cloud/answer/13464323"
+      }
+    }
+  ],
+  "timeline": [
+    {
+      "phase": "setup",
+      "label": "Cloud project, consent screen, client ID",
+      "duration": "Under an hour",
+      "kind": "active",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://support.google.com/cloud/answer/13464323"
+      }
+    },
+    {
+      "phase": "test",
+      "label": "Testing mode (100 users, 7-day tokens)",
+      "duration": "As long as you need",
+      "kind": "active",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://support.google.com/cloud/answer/13464323"
+      }
+    },
+    {
+      "phase": "review",
+      "label": "Verification (+ CASA for restricted scopes)",
+      "duration": "Under a week (sensitive) · 4–6 weeks (restricted)",
+      "kind": "waiting",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://nango.dev/docs/api-integrations/google-shared/google-security-review",
+        "note": "Third-party docs (Nango). Google publishes no SLA."
+      }
+    },
+    {
+      "phase": "production",
+      "label": "Verified app; CASA renews yearly",
+      "duration": "Annual revalidation",
+      "kind": "none",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://support.google.com/cloud/answer/13465431"
+      }
+    }
+  ],
+  "drafts": {
+    "note": "Templates to edit. Replace every [bracketed] part, delete what doesn't apply, and only claim features your app actually has. Nothing here is submitted for you.",
+    "scopeJustification": [
+      {
+        "scope": "gmail.send",
+        "text": "[App name] lets users ask an AI assistant to send emails on their behalf, for example [replying to a customer or sending a meeting follow-up]. The assistant drafts the message, shows it to the user for approval, and sends it only after the user clicks Send. We request gmail.send because the feature only needs to send mail; we don't read, modify or delete existing messages, so narrower read scopes aren't needed and broader ones would exceed what the feature uses."
+      },
+      {
+        "scope": "gmail.readonly (only if you truly need reading)",
+        "text": "[App name] summarizes [the user's unread messages from the last 24 hours] so the assistant can [draft replies / build a daily briefing]. We need to read message content because [feature] depends on it; gmail.metadata is not enough because [reason, e.g. summaries need the message body]. We don't store message content beyond [retention period], don't use it to train AI models without explicit consent, and handle it under the Google API Services User Data Policy, including Limited Use."
+      }
+    ],
+    "demoVideoOutline": [
+      "Open the app's homepage and show the URL bar with your verified domain.",
+      "Click 'Connect Gmail' and show the full Google consent screen in English, with the app name and each exact scope visible.",
+      "Grant access and show the redirect back to your app.",
+      "For each requested scope, show the feature that uses it end to end (e.g. the assistant drafting and sending an email after the user approves).",
+      "If you use Gmail data for AI, show where users give explicit consent.",
+      "Show how a user disconnects the app or deletes their data.",
+      "Upload as unlisted on YouTube and paste the link in the verification form."
+    ],
+    "checklist": [
+      "Separate production Google Cloud project (not the one used for testing).",
+      "Homepage, privacy policy and authorized domains are on a domain verified in Search Console.",
+      "Privacy policy is linked from the homepage and covers how Google user data is used.",
+      "Requested scopes are the narrowest that work (gmail.send if you only send).",
+      "A justification is written for every sensitive or restricted scope.",
+      "The demo video shows the consent screen with exact scopes and each feature using each scope.",
+      "Data use is checked against the Google API Services User Data Policy (Limited Use).",
+      "If using restricted scopes: budget for a CASA assessment and more than one remediation round."
+    ]
+  },
+  "composio": {
+    "managed": "yes",
+    "toolkit": "GMAIL",
+    "note": "Composio provides a managed OAuth app for Gmail, which lets you skip Google verification while prototyping. For production with your own branding, you'd still need your own verified app.",
+    "evidence": { "label": "Docs", "url": "https://docs.composio.dev/toolkits/managed-auth" }
+  },
+  "portalObservation": null,
+  "sources": [
+    "https://developers.google.com/workspace/gmail/api/auth/scopes",
+    "https://support.google.com/cloud/answer/13464321",
+    "https://support.google.com/cloud/answer/13464323",
+    "https://support.google.com/cloud/answer/13465431",
+    "https://nango.dev/docs/api-integrations/google-shared/google-security-review",
+    "https://docs.composio.dev/toolkits/managed-auth"
+  ],
+  "lastChecked": "2026-10-28"
+}

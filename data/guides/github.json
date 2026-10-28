@@ -1,0 +1,182 @@
+{
+  "slug": "github",
+  "name": "GitHub",
+  "website": "https://github.com",
+  "kind": "library",
+  "verdict": {
+    "difficulty": "Easy",
+    "timeToFirstTest": {
+      "text": "About 5 minutes",
+      "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "Estimate: a single short form with no review step." }
+    },
+    "timeToProduction": {
+      "text": "Same day. There is no approval process.",
+      "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "The creation flow has no submission or review step." }
+    },
+    "summary": "Fill in one form and you're live. The real decision is whether to build a GitHub App instead, which GitHub recommends."
+  },
+  "callouts": [
+    {
+      "text": "GitHub recommends building a GitHub App instead of an OAuth app. GitHub Apps use fine-grained permissions, let users choose which repositories to grant, use short-lived tokens, and can act independently of a user. OAuth apps can only act on behalf of a user.",
+      "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" }
+    },
+    {
+      "text": "A user or organization can own up to 100 OAuth apps.",
+      "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" }
+    },
+    {
+      "text": "An OAuth app accepts up to 10 callback URLs. Older guidance said only one.",
+      "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "Corrected during verification. See /verification." }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Choose GitHub App or OAuth app",
+      "detail": "Use a GitHub App if your agent works on specific repositories or runs in the background. Use an OAuth app if you only need user-scoped access and want the simplest setup.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" }
+    },
+    {
+      "title": "Prepare the form values",
+      "detail": "Pick an application name, a homepage URL, an optional description, and your callback URL(s), e.g. https://yourapp.com/api/oauth/github/callback.",
+      "actor": "agent",
+      "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" }
+    },
+    {
+      "title": "Register the app",
+      "detail": "Go to Settings → Developer settings → OAuth Apps → New OAuth App while signed in to the account or org that should own the app. 'Expire user access tokens' is on by default. Leave it on if your token refresh logic supports it.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" }
+    },
+    {
+      "title": "Generate a client secret and store it",
+      "detail": "Generate a client secret on the app page. Put GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET in your secret manager or environment variables, never in the repo.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" }
+    },
+    {
+      "title": "Implement the authorize and token-exchange flow",
+      "detail": "Redirect to github.com/login/oauth/authorize with the scopes you need, then exchange the code for a token at the callback.",
+      "actor": "agent",
+      "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps" }
+    },
+    {
+      "title": "Test with your own account",
+      "detail": "Click Connect, approve on GitHub's consent screen, and confirm an API call works. No review is needed after this.",
+      "actor": "you",
+      "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps" }
+    }
+  ],
+  "requirements": [
+    { "item": "Application name", "status": "required", "detail": "Shown to users on the consent screen.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } },
+    { "item": "Homepage URL", "status": "required", "detail": "The full URL of your app's website.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } },
+    { "item": "Callback URL", "status": "required", "detail": "Up to 10 callback URLs are allowed.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } },
+    { "item": "Description", "status": "not_required", "detail": "Optional. Users can see it.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } },
+    { "item": "Privacy policy", "status": "not_required", "detail": "The creation form doesn't ask for one. You still need one for your own product.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } },
+    { "item": "Verified domain", "status": "not_required", "detail": "Not part of the OAuth app flow.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } },
+    { "item": "Demo video / review", "status": "not_required", "detail": "There is no review step.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } },
+    { "item": "Business entity", "status": "not_required", "detail": "Any personal account or org can own an app.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } }
+  ],
+  "scopes": {
+    "triggerReview": [],
+    "noReview": [
+      { "scope": "read:user, user:email", "why": "Read profile and email. Lightest useful scopes.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps" } },
+      { "scope": "public_repo", "why": "Write access limited to public repositories.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps" } },
+      { "scope": "repo", "why": "Full control of private repositories. It needs no review, but it's a lot to ask users to trust.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps" } }
+    ],
+    "tip": "No GitHub scope triggers review, but broad scopes like repo hurt conversion. Start with read:user. If you need per-repository access, a GitHub App's fine-grained permissions fit better."
+  },
+  "blockers": [
+    { "reason": "redirect_uri mismatch error", "fix": "The redirect_uri you send must match one of the registered callback URLs. Register dev and prod URLs; you can have up to 10.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/maintaining-oauth-apps/troubleshooting-authorization-request-errors" } },
+    { "reason": "Organization has OAuth app access restrictions", "fix": "Users in orgs with OAuth app access restrictions must ask an org owner to approve your app before it can see org data.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/organizations/managing-oauth-access-to-your-organizations-data/about-oauth-app-access-restrictions" } },
+    { "reason": "Hit the 100-app limit", "fix": "Delete unused apps, or create the app under a different org.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } }
+  ],
+  "scopeAdvisor": [
+    {
+      "need": "Only need to know who the user is",
+      "use": "read:user, user:email",
+      "insteadOf": "repo",
+      "why": "No GitHub scope triggers review, but repo asks for full control of private repositories, which users are slow to trust.",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps"
+      }
+    },
+    {
+      "need": "Only write to public repositories",
+      "use": "public_repo",
+      "insteadOf": "repo",
+      "why": "public_repo limits write access to public repositories.",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps"
+      }
+    },
+    {
+      "need": "Access to specific repositories only",
+      "use": "A GitHub App with fine-grained permissions",
+      "insteadOf": "An OAuth app with repo",
+      "why": "GitHub Apps let users choose which repositories to grant and use short-lived tokens.",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+      }
+    }
+  ],
+  "timeline": [
+    {
+      "phase": "setup",
+      "label": "Register the OAuth app",
+      "duration": "About 5 minutes",
+      "kind": "active",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+      }
+    },
+    {
+      "phase": "test",
+      "label": "Test with your own account",
+      "duration": "Same day",
+      "kind": "active",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+      }
+    },
+    {
+      "phase": "review",
+      "label": "Review",
+      "duration": "None",
+      "kind": "none",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app",
+        "note": "There is no approval process."
+      }
+    },
+    {
+      "phase": "production",
+      "label": "Live for any GitHub user",
+      "duration": "Same day",
+      "kind": "none",
+      "evidence": {
+        "label": "Docs",
+        "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+      }
+    }
+  ],
+  "composio": {
+    "managed": "yes",
+    "toolkit": "GITHUB",
+    "note": "Composio provides a managed OAuth app for GitHub, so you can skip registration while prototyping.",
+    "evidence": { "label": "Docs", "url": "https://docs.composio.dev/toolkits/managed-auth" }
+  },
+  "portalObservation": null,
+  "sources": [
+    "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app",
+    "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps",
+    "https://docs.composio.dev/toolkits/managed-auth"
+  ],
+  "lastChecked": "2026-10-28"
+}
