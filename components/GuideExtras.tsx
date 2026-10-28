@@ -70,29 +70,29 @@ const KIND_STYLE: Record<TimelinePhase["kind"], string> = {
   none: "bg-zinc-200 dark:bg-zinc-700",
 };
 
+/** Compact timeline bar for the answer card: one bar per phase, two columns on phones. */
 export function Timeline({ guide }: { guide: Guide }) {
   const phases = timelineFor(guide);
   return (
-    <div className={`${card} space-y-4`}>
-      <ol className="grid gap-4 sm:grid-cols-4">
+    <div className="space-y-3">
+      <ol className="grid grid-cols-2 gap-x-3 gap-y-4 sm:grid-cols-4">
         {phases.map((p, i) => (
-          <li key={i} className="space-y-2">
-            <div className={`h-3 rounded-full ${KIND_STYLE[p.kind]}`} aria-hidden />
-            <div className="text-xs uppercase tracking-wide text-zinc-500">{PHASE_NAME[p.phase]}</div>
-            <div className="text-sm font-medium">{p.duration}</div>
-            <div className="text-sm text-zinc-600 dark:text-zinc-400">{p.label}</div>
-            <EvidenceTag evidence={p.evidence} />
+          <li key={i} className="min-w-0 space-y-1.5">
+            <div className={`h-2.5 rounded-full ${KIND_STYLE[p.kind]}`} aria-hidden />
+            <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-zinc-500">
+              {PHASE_NAME[p.phase]} <EvidenceTag evidence={p.evidence} />
+            </div>
+            <div className="text-sm font-medium leading-snug">{p.duration}</div>
+            <div className="text-xs text-zinc-500">{p.label}</div>
           </li>
         ))}
       </ol>
-      <div className="flex flex-wrap gap-4 text-xs text-zinc-500">
-        <Legend cls={KIND_STYLE.active} text="Your active work" />
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-zinc-500">
+        <Legend cls={KIND_STYLE.active} text="Your work" />
         <Legend cls={KIND_STYLE.waiting} text="Waiting on the provider" />
         <Legend cls={KIND_STYLE.none} text="No work / milestone" />
+        {!guide.timeline?.length && <span>Derived from the verdict; no detailed timeline.</span>}
       </div>
-      {!guide.timeline?.length && (
-        <p className="text-xs text-zinc-500">Derived from the verdict above; this guide has no detailed timeline.</p>
-      )}
     </div>
   );
 }

@@ -146,6 +146,11 @@
       }
     }
   ],
+  "paths": [
+    {"id": "signin", "label": "Sign-in only", "scopes": "openid, profile, email (Sign In with LinkedIn)", "time": "Minutes, self-serve", "steps": [0, 1, 2, 3, 4], "advice": 0, "evidence": {"label": "Docs", "url": "https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/sign-in-with-linkedin-v2"}},
+    {"id": "member", "label": "Post as the member", "scopes": "w_member_social (Share on LinkedIn)", "time": "Believed self-serve; not confirmed", "steps": [0, 1, 2, 3, 4], "advice": 1, "evidence": {"label": "Uncertain", "url": null, "note": "Share on LinkedIn being self-serve wasn't confirmed on an official page this round."}},
+    {"id": "company", "label": "Post as a company", "scopes": "Community Management API scopes", "time": "No published timeline; can be declined", "steps": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "advice": null, "evidence": {"label": "Uncertain", "url": "https://learn.microsoft.com/linkedin/marketing/increasing-access", "note": "LinkedIn publishes no review SLA for Community Management."}}
+  ],
   "timeline": [
     {
       "phase": "setup",

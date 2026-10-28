@@ -126,6 +126,11 @@
       "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" }
     }
   ],
+  "paths": [
+    {"id": "own", "label": "Just you or your team", "scopes": "Personal access token or internal connection", "time": "Minutes", "steps": [0], "advice": 1, "evidence": {"label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization", "note": "The docs describe PATs and internal connections as static tokens with no OAuth flow; they give no time estimate, so 'minutes' is our reading."}},
+    {"id": "public", "label": "'Connect Notion' button", "scopes": "Public connection (users pick pages)", "time": "No review needed", "steps": [0, 1, 2, 3, 4, 5, 6], "advice": 0, "evidence": {"label": "Docs", "url": "https://developers.notion.com/guides/get-started/marketplace-listing"}},
+    {"id": "marketplace", "label": "Marketplace listing", "scopes": "Public connection plus a listing", "time": "5–10 business days for the listing", "steps": [0, 1, 2, 3, 4, 5, 6, 7, 8], "advice": null, "evidence": {"label": "Docs", "url": "https://developers.notion.com/guides/get-started/marketplace-listing"}}
+  ],
   "timeline": [
     { "phase": "setup", "label": "Create public connection and build OAuth", "duration": "An hour or two", "kind": "active", "evidence": { "label": "Uncertain", "url": null, "note": "Our estimate; Notion gives no time." } },
     { "phase": "test", "label": "Test in your own workspace", "duration": "Same day", "kind": "active", "evidence": { "label": "Uncertain", "url": null, "note": "Our estimate." } },

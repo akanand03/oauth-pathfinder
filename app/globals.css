@@ -6,5 +6,7 @@
 }
 
 body {
+  /* Tooltips near the screen edge must not cause sideways scrolling on phones. */
+  overflow-x: clip;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }

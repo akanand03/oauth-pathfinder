@@ -52,6 +52,23 @@ export interface ScopeSuggestion {
   evidence: Evidence;
 }
 
+/**
+ * One option in the "What do you need?" picker. Library guides only; built from the Scope Advisor's lighter paths
+ * plus the full path, using times already stated (with evidence) elsewhere in the guide.
+ */
+export interface GuidePath {
+  id: string;
+  label: string;
+  /** What to request on this path. */
+  scopes: string;
+  time: string;
+  /** Indexes into guide.steps that apply on this path. */
+  steps: number[];
+  /** Index into guide.scopeAdvisor shown with this path, if any. */
+  advice: number | null;
+  evidence: Evidence;
+}
+
 /** One bar on the timeline. "waiting" is time spent on someone else's queue; "active" is your own work. */
 export interface TimelinePhase {
   phase: "setup" | "test" | "review" | "production";
@@ -119,6 +136,7 @@ export interface Guide {
   blockers: Blocker[];
   /** Library guides set these; generated guides fall back to values derived from verdict and scopes. */
   scopeAdvisor?: ScopeSuggestion[];
+  paths?: GuidePath[];
   timeline?: TimelinePhase[];
   drafts?: Drafts;
   communityNotes?: CommunityNote[];

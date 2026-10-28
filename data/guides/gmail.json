@@ -156,6 +156,12 @@
       }
     }
   ],
+  "paths": [
+    {"id": "send", "label": "Send only", "scopes": "gmail.send (sensitive)", "time": "Usually under a week of verification", "steps": [0, 1, 2, 3, 4, 5, 6, 7, 8], "advice": 0, "evidence": {"label": "Docs", "url": "https://nango.dev/docs/api-integrations/google-shared/google-security-review", "note": "Third-party docs (Nango). Google publishes no SLA."}},
+    {"id": "labels", "label": "Labels only", "scopes": "gmail.labels (non-sensitive)", "time": "No sensitive-scope verification; time not documented", "steps": [0, 1, 2, 3, 4], "advice": 1, "evidence": {"label": "Uncertain", "url": "https://developers.google.com/workspace/gmail/api/auth/scopes", "note": "gmail.labels is non-sensitive per the docs; the guide has no time for this path."}},
+    {"id": "read", "label": "Read or modify", "scopes": "gmail.readonly or gmail.modify (restricted)", "time": "About 4–6 weeks including CASA, renewed every year", "steps": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "advice": null, "evidence": {"label": "Docs", "url": "https://nango.dev/docs/api-integrations/google-shared/google-security-review", "note": "Third-party docs (Nango). Google publishes no SLA."}},
+    {"id": "internal", "label": "Own Workspace org only", "scopes": "An Internal consent screen", "time": "No verification", "steps": [0, 1, 2, 3, 4], "advice": 2, "evidence": {"label": "Docs", "url": "https://support.google.com/cloud/answer/13464323"}}
+  ],
   "timeline": [
     {
       "phase": "setup",

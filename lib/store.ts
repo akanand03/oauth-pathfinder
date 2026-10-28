@@ -134,3 +134,13 @@ export async function incrWindow(key: string, windowSeconds: number): Promise<nu
   entry.n += 1;
   return entry.n;
 }
+
+/** Undoes an incrWindow for a request that was refused, so refusals don't use up the window. */
+export async function decrWindow(key: string): Promise<void> {
+  if (redis) {
+    await redis.decr(key);
+    return;
+  }
+  const entry = memory.get(key) as { n: number; reset: number } | undefined;
+  if (entry && entry.n > 0) entry.n -= 1;
+}

@@ -4,7 +4,7 @@
   "checked": [
     {
       "guide": "github",
-      "claim": "No approval needed; form asks for name, homepage URL, optional description, callback URL",
+      "claim": "No approval needed; form asks for name, homepage URL, optional description, redirect URIs (also tested by hand on 2026-10-28)",
       "result": "Confirmed",
       "source": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
     },
@@ -103,14 +103,16 @@
     {
       "guide": "github",
       "original": "OAuth apps support only one callback URL.",
-      "corrected": "GitHub's docs now say you can enter up to 10 callback URLs.",
-      "source": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+      "corrected": "Tested by hand on 2026-10-28: the form's “Redirect URIs” field accepts up to 10 URIs, with optional wildcard matching. GitHub's current docs also say up to 10.",
+      "source": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app",
+      "label": "Tested"
     },
     {
       "guide": "github",
       "original": "Form asks for name, homepage, description, callback URL.",
-      "corrected": "The form also has 'Enable Device Flow' and 'Expire user access tokens' (on by default).",
-      "source": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+      "corrected": "Tested by hand on 2026-10-28: the form also has “Expire user access tokens” (on by default, provides a refresh token) and an optional Device Flow setting, and the URL field is labelled “Redirect URIs”.",
+      "source": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app",
+      "label": "Tested"
     },
     {
       "guide": "slack",
@@ -207,5 +209,32 @@
       "why": "Our estimates; Notion publishes no times."
     }
   ],
-  "manualTests": []
+  "manualTests": [
+    {
+      "guide": "github",
+      "date": "2026-10-28",
+      "test": "Registered a new OAuth app (Settings → Developer settings → OAuth Apps → New OAuth App).",
+      "result": "Took under 5 minutes, with no review or approval step."
+    },
+    {
+      "guide": "github",
+      "date": "2026-10-28",
+      "test": "Redirect URI field.",
+      "result": "Labelled “Redirect URIs”. Accepts up to 10 URIs, with optional wildcard matching. Corrects the older “only one callback URL” claim."
+    },
+    {
+      "guide": "github",
+      "date": "2026-10-28",
+      "test": "Token and flow settings on the form.",
+      "result": "“Expire user access tokens” is on by default and provides a refresh token. Device Flow is optional."
+    }
+  ],
+  "headline": {
+    "guide": "github",
+    "date": "2026-10-28",
+    "title": "Why we test, not just read docs",
+    "before": "Older GitHub docs, and our first draft: an OAuth app has only one callback URL.",
+    "after": "Creating an app by hand on Oct 28, 2026: the “Redirect URIs” field takes up to 10 URIs, with optional wildcard matching.",
+    "why": "Docs pages and the posts that copy them lag behind the product. Filling in the real form caught a stale claim that reading alone had passed on, and confirmed the rest: no review, under 5 minutes."
+  }
 }

@@ -6,12 +6,12 @@
   "verdict": {
     "difficulty": "Easy",
     "timeToFirstTest": {
-      "text": "About 5 minutes",
-      "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "Estimate: a single short form with no review step." }
+      "text": "Under 5 minutes to register the app",
+      "evidence": {"label": "Tested", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "Tested by hand on 2026-10-28: registration took under 5 minutes."}
     },
     "timeToProduction": {
       "text": "Same day. There is no approval process.",
-      "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "The creation flow has no submission or review step." }
+      "evidence": {"label": "Tested", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "Tested by hand on 2026-10-28: no review or approval step."}
     },
     "summary": "Fill in one form and you're live. The real decision is whether to build a GitHub App instead, which GitHub recommends."
   },
@@ -25,8 +25,12 @@
       "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" }
     },
     {
-      "text": "An OAuth app accepts up to 10 callback URLs. Older guidance said only one.",
-      "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "Corrected during verification. See /verification." }
+      "text": "The form's \"Redirect URIs\" field takes up to 10 URIs, with optional wildcard matching. Older docs said an OAuth app had only one callback URL; that claim is corrected.",
+      "evidence": {"label": "Tested", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "Tested by hand on 2026-10-28; corrects the older one-callback-URL claim (see /verification)."}
+    },
+    {
+      "text": "\"Expire user access tokens\" is on by default and gives you a refresh token. Device Flow is optional.",
+      "evidence": {"label": "Tested", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "Tested by hand on 2026-10-28 (see /verification)."}
     }
   ],
   "steps": [
@@ -38,15 +42,15 @@
     },
     {
       "title": "Prepare the form values",
-      "detail": "Pick an application name, a homepage URL, an optional description, and your callback URL(s), e.g. https://yourapp.com/api/oauth/github/callback.",
+      "detail": "Pick an application name, a homepage URL, an optional description, and your redirect URIs (up to 10, optional wildcard matching), e.g. https://yourapp.com/api/oauth/github/callback.",
       "actor": "agent",
-      "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" }
+      "evidence": {"label": "Tested", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "Tested by hand on 2026-10-28 (see /verification)."}
     },
     {
       "title": "Register the app",
-      "detail": "Go to Settings → Developer settings → OAuth Apps → New OAuth App while signed in to the account or org that should own the app. 'Expire user access tokens' is on by default. Leave it on if your token refresh logic supports it.",
+      "detail": "Go to Settings → Developer settings → OAuth Apps → New OAuth App while signed in to the account or org that should own the app. 'Expire user access tokens' is on by default and provides a refresh token; leave it on if your token refresh logic supports it. Device Flow is optional. There's no review: it takes under 5 minutes.",
       "actor": "you",
-      "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" }
+      "evidence": {"label": "Tested", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "Tested by hand on 2026-10-28 (see /verification)."}
     },
     {
       "title": "Generate a client secret and store it",
@@ -70,11 +74,11 @@
   "requirements": [
     { "item": "Application name", "status": "required", "detail": "Shown to users on the consent screen.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } },
     { "item": "Homepage URL", "status": "required", "detail": "The full URL of your app's website.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } },
-    { "item": "Callback URL", "status": "required", "detail": "Up to 10 callback URLs are allowed.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } },
+    { "item": "Redirect URIs", "status": "required", "detail": "Up to 10, with optional wildcard matching.", "evidence": {"label": "Tested", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "Tested by hand on 2026-10-28 (see /verification)."} },
     { "item": "Description", "status": "not_required", "detail": "Optional. Users can see it.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } },
     { "item": "Privacy policy", "status": "not_required", "detail": "The creation form doesn't ask for one. You still need one for your own product.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } },
     { "item": "Verified domain", "status": "not_required", "detail": "Not part of the OAuth app flow.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } },
-    { "item": "Demo video / review", "status": "not_required", "detail": "There is no review step.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } },
+    { "item": "Demo video / review", "status": "not_required", "detail": "There is no review step.", "evidence": {"label": "Tested", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "Tested by hand on 2026-10-28 (see /verification)."} },
     { "item": "Business entity", "status": "not_required", "detail": "Any personal account or org can own an app.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } }
   ],
   "scopes": {
@@ -87,7 +91,7 @@
     "tip": "No GitHub scope triggers review, but broad scopes like repo hurt conversion. Start with read:user. If you need per-repository access, a GitHub App's fine-grained permissions fit better."
   },
   "blockers": [
-    { "reason": "redirect_uri mismatch error", "fix": "The redirect_uri you send must match one of the registered callback URLs. Register dev and prod URLs; you can have up to 10.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/maintaining-oauth-apps/troubleshooting-authorization-request-errors" } },
+    { "reason": "redirect_uri mismatch error", "fix": "The redirect_uri you send must match one of the registered redirect URIs. Register dev and prod URLs; you can have up to 10, with optional wildcard matching.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/maintaining-oauth-apps/troubleshooting-authorization-request-errors" } },
     { "reason": "Organization has OAuth app access restrictions", "fix": "Users in orgs with OAuth app access restrictions must ask an org owner to approve your app before it can see org data.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/organizations/managing-oauth-access-to-your-organizations-data/about-oauth-app-access-restrictions" } },
     { "reason": "Hit the 100-app limit", "fix": "Delete unused apps, or create the app under a different org.", "evidence": { "label": "Docs", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" } }
   ],
@@ -123,15 +127,22 @@
       }
     }
   ],
+  "paths": [
+    {"id": "signin", "label": "Sign-in only", "scopes": "read:user, user:email", "time": "Same day, no review", "steps": [0, 1, 2, 3, 4, 5], "advice": 0, "evidence": {"label": "Tested", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "Tested by hand on 2026-10-28: no review or approval step."}},
+    {"id": "public", "label": "Write to public repos", "scopes": "public_repo", "time": "Same day, no review", "steps": [0, 1, 2, 3, 4, 5], "advice": 1, "evidence": {"label": "Tested", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "Tested by hand on 2026-10-28: no review or approval step."}},
+    {"id": "pick", "label": "Only chosen repos", "scopes": "A GitHub App with fine-grained permissions", "time": "Same day, no review", "steps": [0, 1, 2, 3, 4, 5], "advice": 2, "evidence": {"label": "Tested", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "Tested by hand on 2026-10-28: no review or approval step."}},
+    {"id": "private", "label": "Private repos", "scopes": "repo", "time": "Same day, no review", "steps": [0, 1, 2, 3, 4, 5], "advice": null, "evidence": {"label": "Tested", "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app", "note": "Tested by hand on 2026-10-28: no review or approval step."}}
+  ],
   "timeline": [
     {
       "phase": "setup",
       "label": "Register the OAuth app",
-      "duration": "About 5 minutes",
+      "duration": "Under 5 minutes",
       "kind": "active",
       "evidence": {
-        "label": "Docs",
-        "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+        "label": "Tested",
+        "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app",
+        "note": "Tested by hand on 2026-10-28: registration took under 5 minutes."
       }
     },
     {
@@ -150,9 +161,9 @@
       "duration": "None",
       "kind": "none",
       "evidence": {
-        "label": "Docs",
+        "label": "Tested",
         "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app",
-        "note": "There is no approval process."
+        "note": "Tested by hand on 2026-10-28: no review or approval step."
       }
     },
     {

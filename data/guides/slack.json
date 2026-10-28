@@ -136,6 +136,10 @@
       }
     }
   ],
+  "paths": [
+    {"id": "button", "label": "Connect button only", "scopes": "Any scopes, no Marketplace listing", "time": "Immediate after setup (about 15 minutes)", "steps": [0, 1, 2, 3, 4], "advice": 0, "evidence": {"label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/distributing-your-app-in-the-slack-marketplace"}},
+    {"id": "marketplace", "label": "Marketplace listing", "scopes": "Only scopes for features that already exist", "time": "Up to 10 business days + up to 10 weeks of review", "steps": [0, 1, 2, 3, 4, 5, 6, 7, 8], "advice": 1, "evidence": {"label": "Docs", "url": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide", "note": "Preliminary review up to 10 business days, functional review up to 10 weeks. One anecdotal report of ~4 months."}}
+  ],
   "timeline": [
     {
       "phase": "setup",
