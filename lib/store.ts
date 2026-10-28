@@ -3,6 +3,7 @@ import path from "node:path";
 import { Redis } from "@upstash/redis";
 import type { Guide } from "./types";
 import { getLibraryGuide } from "./library";
+import { properName } from "./slug";
 
 // Upstash when configured; otherwise an in-memory map so `npm run dev` works with no setup.
 const redis =
@@ -64,8 +65,17 @@ export async function cacheSet<T>(key: string, value: T, ttlSeconds: number): Pr
   else memory.set(key, { v: value, exp: Date.now() + ttlSeconds * 1000 });
 }
 
+/** Guides saved before names were taken from the docs may be lowercase ("hubspot"); fix the casing from the guide's own text. */
+function withProperName(guide: Guide): Guide {
+  const name = properName(guide.name, [guide.verdict.summary, ...guide.callouts.map((c) => c.text)]);
+  return name === guide.name ? guide : { ...guide, name };
+}
+
 export async function getGuide(slug: string): Promise<Guide | null> {
-  return getLibraryGuide(slug) ?? (await get<Guide>(`guide:${slug}`));
+  const library = getLibraryGuide(slug);
+  if (library) return library;
+  const saved = await get<Guide>(`guide:${slug}`);
+  return saved && withProperName(saved);
 }
 
 export async function saveGuide(guide: Guide): Promise<void> {
@@ -85,7 +95,7 @@ export async function recentGuides(limit = 12): Promise<Guide[]> {
     ? await redis.zrange<string[]>("guides:recent", 0, limit - 1, { rev: true })
     : ((memory.get("guides:recent") as string[]) ?? []).slice(0, limit);
   const guides = await Promise.all(slugs.map((s) => get<Guide>(`guide:${s}`)));
-  return guides.filter((g): g is Guide => g !== null);
+  return guides.filter((g): g is Guide => g !== null).map(withProperName);
 }
 
 /** Prevents two concurrent requests from researching the same app. Returns true if acquired. */

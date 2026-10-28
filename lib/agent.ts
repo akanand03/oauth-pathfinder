@@ -7,7 +7,7 @@ import { estimateTokens, trimToRelevant } from "./retrieval/trim";
 import { extractSchema, writeSchema } from "./schema";
 import type { Evidence, Guide, ProgressEvent } from "./types";
 import { formatUsd, type StageUsage } from "./usage";
-import type { ParsedQuery } from "./slug";
+import { properName, type ParsedQuery } from "./slug";
 
 // Retrieval runs in our code; the model only ever sees trimmed page text.
 // Budget per guide: 3 searches (no tokens) + 1 small extraction call per page + 1 write call. Models live in ./llm.
@@ -129,6 +129,8 @@ export async function runAgent(q: ParsedQuery, emit: Emit, deadline = Number.POS
     }
   }
   if (pages.length === 0) throw new Error("None of the official pages could be read. No model tokens were spent.");
+  // Use the provider's own spelling from its docs ("HubSpot", not the typed "hubspot") from here on.
+  q = { ...q, name: properName(q.name, pages.flatMap((p) => [p.page.title, p.text])) };
 
   // Portal observation in code: a fetched page that is itself a form, not behind login.
   const formPage = pages.find((p) => p.page.formFields.length >= 2);
