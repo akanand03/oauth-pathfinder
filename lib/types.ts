@@ -68,6 +68,31 @@ export interface Drafts {
   note: string;
 }
 
+/**
+ * A tip from a developer's public post (forum, Q&A, code repo, blog). Anecdotal by definition: one person's
+ * experience, paraphrased by us, never evidence for a guide claim. Library guides only; hand-curated.
+ */
+export interface CommunityNote {
+  id: string;
+  /** Our own words, at most two sentences. */
+  tip: string;
+  tag: "time_sink" | "rejection" | "shortcut" | "gotcha";
+  sourceType: "forum" | "qa" | "code" | "blog";
+  site: string;
+  url: string;
+  /** "YYYY-MM-DD", "YYYY-MM" or "YYYY": only as precise as the source shows. */
+  date: string;
+  dateNote?: string | null;
+  /** Public handle as shown on the source; null shows "A developer". */
+  author: string | null;
+  /** Optional short quote from the source, under 15 words. */
+  quote?: string | null;
+  conflictsWithDocs: boolean;
+  conflictNote?: string | null;
+  /** Shown in the home page strip. */
+  featured?: boolean;
+}
+
 export interface Guide {
   slug: string;
   name: string;
@@ -93,6 +118,7 @@ export interface Guide {
   scopeAdvisor?: ScopeSuggestion[];
   timeline?: TimelinePhase[];
   drafts?: Drafts;
+  communityNotes?: CommunityNote[];
   composio: {
     managed: "yes" | "no" | "unknown";
     toolkit: string | null;

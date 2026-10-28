@@ -1,4 +1,5 @@
 import { ActorTag, DifficultyBadge, EvidenceTag } from "./Badges";
+import { CommunityNotes } from "./CommunityNotes";
 import { AgentDrafts, ScopeAdvisor, Timeline } from "./GuideExtras";
 import type { Guide, Requirement } from "@/lib/types";
 import { formatUsd, type GuideUsage } from "@/lib/usage";
@@ -148,6 +149,12 @@ export function GuideView({ guide }: { guide: Guide }) {
       {guide.drafts && (
         <Section title="Agent drafts for you">
           <AgentDrafts drafts={guide.drafts} />
+        </Section>
+      )}
+
+      {guide.kind === "library" && (
+        <Section title="💬 What developers wish they knew">
+          <CommunityNotes guide={guide} />
         </Section>
       )}
 

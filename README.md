@@ -103,6 +103,15 @@ The server then **enforces evidence labels**. `Docs` survives only if it cites a
 - **Why we cut tokens from 337k to 25–36k per guide:** letting the model browse freely used about 337k tokens in one step. Now our code does the searching, picks 3 official pages, strips and trims them, and the model only reads that text. Input is about 8–9k tokens per guide; free reasoning models add most of the rest as thinking (live runs: Zoom 24.9k, Notion 35.7k), still under the 40k target and $0 on free models.
 - **Why free OpenRouter models:** reviewers can run the app with no paid key. Gemini's free tier was refused for the projects we tried, and Groq's free tier hit daily limits. OpenRouter's free models, with 3 fallbacks per step, keep cost at $0; the trade-off is speed and a 50-requests/day limit, so generation is capped at 8 guides a day.
 
+## Community notes
+
+Each library guide has a "💬 What developers wish they knew" section, and the home page shows three of them.
+
+- **Why they exist:** the docs say what should happen; developers' posts say what did. The Slack docs give up to 10 business days plus up to 10 weeks for Marketplace review, while one developer waited four months. Notes like that (time sinks, rejection reasons, shortcuts, gotchas) are often what you most want to know before you start.
+- **Why they're labelled anecdotal:** a note is one person's experience at one point in time, sometimes years old. It isn't evidence for a guide claim, so it never gets a `Docs` or `Tested` label. Every note carries a separate `Community: anecdotal` label, and a `Conflicts with docs` badge when it disagrees with the guide. When they disagree, trust the labelled facts and treat the note as a warning that reality can differ.
+- **How they're picked:** by hand from Reddit, Stack Overflow, GitHub and dev blogs, with no model involved. Each source page was opened to confirm the claim, author handle and date; notes we couldn't confirm were dropped. Tips are in our own words (two sentences at most, with an optional quote under 15 words), dates are only as precise as the source shows, and there are no photos: an initials avatar and the public handle shown on the source, or "A developer".
+- **Library guides only.** The live agent doesn't collect notes; a guide with none shows "No community notes yet". The 👍 button is stored only in your browser's localStorage.
+
 ## Limitations
 
 - **Model change:** the brief asked for Groq `groq/compound`. Groq's deprecations page lists it as decommissioned on 2026-09-21 with no replacement. An earlier version let `gpt-oss-120b` run `browser_search` freely, which used about 337k tokens in one stage. Retrieval now runs in our own code. Gemini was tried next, but its free tier was refused for the projects we tested (`403 free tier is not available`), so the default is now OpenRouter's free models, with Gemini and Groq selectable via `LLM_PROVIDER`.

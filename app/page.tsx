@@ -2,6 +2,7 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { DifficultyBadge } from "@/components/Badges";
+import { FeaturedNotes } from "@/components/CommunityNotes";
 import { SearchBox } from "@/components/SearchBox";
 import { LIBRARY } from "@/lib/library";
 import { recentGuides } from "@/lib/store";
@@ -70,6 +71,8 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      <FeaturedNotes guides={LIBRARY} />
 
       <Suspense fallback={null}>
         <RecentGuides />

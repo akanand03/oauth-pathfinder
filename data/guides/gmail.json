@@ -231,6 +231,11 @@
       "If using restricted scopes: budget for a CASA assessment and more than one remediation round."
     ]
   },
+  "communityNotes": [
+    {"id": "gmail-restricted-three-weeks", "tip": "This developer got restricted Gmail scopes verified in about 3 weeks by having every requested scope working before applying and showing all scopes on the consent screen in the demo video. After passing CASA they emailed Google with their case ID instead of waiting.", "tag": "shortcut", "sourceType": "forum", "site": "Reddit r/googlecloud", "url": "https://www.reddit.com/r/googlecloud/comments/1moptdt/got_google_oauth_verified_in_3_weeks_with/", "date": "2025", "dateNote": "Reddit shows the post as \"1y ago\"; exact date not visible to us.", "author": "u/Dramatic_Dentist_621", "quote": null, "conflictsWithDocs": true, "conflictNote": "Faster than our guide's 4–6 weeks for restricted scopes.", "featured": true},
+    {"id": "gmail-granular-scope-rejection", "tip": "Their first review was rejected for not meeting Google's granular scope requirements, and Google asked for test credentials before testing the app. The full restricted-scope process, including the CASA scan and questionnaire, took about four weeks.", "tag": "rejection", "sourceType": "forum", "site": "Reddit r/googlecloud", "url": "https://www.reddit.com/r/googlecloud/comments/1i1dgtm/our_experience_with_google_casa_tier_2/", "date": "2025-01", "dateNote": "The process described ran Dec 17, 2024 to mid-January 2025.", "author": "u/Revolutionary_Ant944", "quote": null, "conflictsWithDocs": false, "conflictNote": null},
+    {"id": "gmail-sensitive-slow-rounds", "tip": "Each reply from Google's reviewers took 2–3 weeks, and they asked for the demo video again with the OAuth client ID clearly visible. After about three rounds the sensitive-scope request was denied without a specific reason (this was in 2019).", "tag": "time_sink", "sourceType": "qa", "site": "Stack Overflow", "url": "https://stackoverflow.com/questions/55405409", "date": "2019-03-28", "author": "bvstone", "quote": null, "conflictsWithDocs": true, "conflictNote": "Our guide says sensitive-scope review is usually under a week."}
+  ],
   "composio": {
     "managed": "yes",
     "toolkit": "GMAIL",

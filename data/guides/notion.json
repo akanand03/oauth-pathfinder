@@ -138,6 +138,11 @@
     { "reason": "Connection can't see a page", "fix": "The user must share it in the page picker, and they need full access to that page to share it.", "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/authorization" } },
     { "reason": "Marketplace listing rejected", "fix": "Reasons include brand/trademark issues, quality concerns, or missing baseline criteria. Read Notion's email, fix, and resubmit.", "evidence": { "label": "Docs", "url": "https://developers.notion.com/guides/get-started/marketplace-listing" } }
   ],
+  "communityNotes": [
+    {"id": "notion-redirect-uri-exact", "tip": "An invalid_grant error from Notion's token endpoint can come from a redirect_uri that doesn't exactly match the one in the authorize URL. One developer's bug was a missing trailing slash.", "tag": "gotcha", "sourceType": "qa", "site": "Stack Overflow", "url": "https://stackoverflow.com/questions/67782515", "date": "2021-07-29", "author": "younesbenallal", "quote": null, "conflictsWithDocs": false, "conflictNote": null},
+    {"id": "notion-search-empty", "tip": "A new integration's search returned no results because Notion grants access page by page, not to the whole workspace. The asker found no way to share every page at once.", "tag": "time_sink", "sourceType": "qa", "site": "Stack Overflow", "url": "https://stackoverflow.com/questions/75861391", "date": "2023-03-28", "author": "0xSharp", "quote": null, "conflictsWithDocs": false, "conflictNote": null},
+    {"id": "notion-basic-auth-helper", "tip": "If the token step returns invalid_client, check your HTTP Basic auth header. Axios's auth option takes the client ID and secret and encodes them for you.", "tag": "shortcut", "sourceType": "qa", "site": "Stack Overflow", "url": "https://stackoverflow.com/questions/67534080", "date": "2021-08-08", "author": "Naomi", "quote": null, "conflictsWithDocs": false, "conflictNote": null}
+  ],
   "composio": {
     "managed": "yes",
     "toolkit": "NOTION",

@@ -221,6 +221,11 @@
       "You know a rejection means starting over with a new app at the Development tier."
     ]
   },
+  "communityNotes": [
+    {"id": "linkedin-community-mgmt-own-app", "tip": "The Community Management API has to be the only product on its LinkedIn app, so you can't add it to an app that already has other products. What worked was creating a second app just for it.", "tag": "gotcha", "sourceType": "qa", "site": "Stack Overflow", "url": "https://stackoverflow.com/questions/79476435", "date": "2025-04-17", "author": "Josh Heslin", "quote": null, "conflictsWithDocs": false, "conflictNote": null, "featured": true},
+    {"id": "linkedin-review-in-progress", "tip": "An access request for LinkedIn's Marketing Developer Platform (since retired) sat at \"Review in Progress\" for over two months, and support couldn't move it. LinkedIn publishes no timeline, so plan for an open-ended wait.", "tag": "time_sink", "sourceType": "qa", "site": "Stack Overflow", "url": "https://stackoverflow.com/questions/57186457", "date": "2019-07-24", "author": "KClark_STF", "quote": null, "conflictsWithDocs": false, "conflictNote": null},
+    {"id": "linkedin-request-access-greyed", "tip": "If \"Request access\" is greyed out with a Member Data Portability tooltip, the app wasn't linked to a real Company Page. That app can't be fixed: create a Company Page, then a new app linked to it.", "tag": "gotcha", "sourceType": "code", "site": "GitHub (project README)", "url": "https://github.com/abhineet34/linkedin-mcp-server", "date": "2026-05-19", "dateNote": "Date of the last README commit.", "author": "abhineet34", "quote": null, "conflictsWithDocs": false, "conflictNote": null}
+  ],
   "composio": {
     "managed": "yes",
     "toolkit": "LINKEDIN",

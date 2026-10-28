@@ -179,6 +179,10 @@
       }
     }
   ],
+  "communityNotes": [
+    {"id": "slack-review-four-months", "tip": "One developer submitted a Slack Marketplace app in early January and was approved in May, so review alone took about four months. Their advice: submit a working but imperfect app early and keep improving it while it waits in the queue.", "tag": "time_sink", "sourceType": "blog", "site": "Level Up Coding (Medium)", "url": "https://levelup.gitconnected.com/how-i-published-my-own-app-in-the-slack-marketplace-and-what-the-docs-didnt-tell-me-776e365d0426", "date": "2026-08-31", "author": "Kamil Buksakowski", "quote": "the review alone took four months", "conflictsWithDocs": true, "conflictNote": "Slack's docs say up to 10 business days for preliminary review plus up to 10 weeks for functional review.", "featured": true},
+    {"id": "slack-vague-scope-reasons", "tip": "Weak scope justifications are a common reason Slack apps get held up, and scopes that look like a \"nice to have\" get rejected. Say exactly why you need each one, for example state plainly that you collect emails if you request users:read.email.", "tag": "rejection", "sourceType": "blog", "site": "DEV Community", "url": "https://dev.to/tomquirk/5-reasons-why-slack-will-reject-your-slack-app-39m8", "date": "2020-10-09", "author": "tomquirk", "quote": null, "conflictsWithDocs": false, "conflictNote": null}
+  ],
   "composio": {
     "managed": "yes",
     "toolkit": "SLACK",
